@@ -1,0 +1,26 @@
+/* ordena.css — Ordena la historia */
+.od-panel { max-width: 680px; }
+.od-eje { display: flex; justify-content: space-between; margin: 0 0 .5rem; font: 600 .74rem/1 var(--texto); letter-spacing: .04em; color: rgba(18,51,36,.7); }
+.od-lista, .od-sol { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.od-carta { position: relative; display: flex; align-items: stretch; gap: .5rem; padding: .5rem .55rem; background: #fffaf0; border: 2px solid rgba(18,51,36,.28); border-radius: 10px; touch-action: pan-y; user-select: none; }
+.od-carta:focus-within { border-color: var(--bronce); }
+.od-carta--ok { border-color: var(--verde); background: rgba(28,92,64,.14); }
+.od-carta--mal { border-color: var(--rojo); background: rgba(165,36,57,.1); }
+.od-carta--arrastre { z-index: 5; box-shadow: 0 12px 26px rgba(0,0,0,.35); cursor: grabbing; transition: none; opacity: .96; }
+.od-pos { flex: none; align-self: center; display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; font: 700 .8rem/1 var(--display); color: var(--hueso); background: var(--verde); }
+.od-asa { flex: none; align-self: center; padding: .4rem .2rem; font-size: 1.3rem; line-height: 1; color: rgba(18,51,36,.55); cursor: grab; }
+.od-carta__cuerpo { flex: 1; display: flex; flex-direction: column; gap: .2rem; min-width: 0; padding: .15rem .2rem; border-radius: 6px; font: 500 .92rem/1.35 var(--texto); color: var(--noche-2); }
+.od-carta__cuerpo:focus-visible { outline: 3px solid var(--bronce); outline-offset: 1px; }
+.od-carta__cuerpo strong { font: 700 1rem/1.25 var(--display); }
+.od-desc { display: block; font: 400 .82rem/1.4 var(--texto); color: rgba(18,51,36,.78); }
+.od-fecha { display: inline-block; align-self: flex-start; margin-top: .15rem; padding: .15rem .5rem; border-radius: 999px; font: 700 .74rem/1.2 var(--texto); color: var(--noche); background: var(--oro); }
+.od-movs { flex: none; display: flex; flex-direction: column; justify-content: center; gap: .3rem; }
+.od-mov { width: 44px; height: 38px; cursor: pointer; font-size: .85rem; color: var(--noche-2); background: rgba(18,51,36,.08); border: 1px solid rgba(18,51,36,.25); border-radius: 8px; }
+.od-mov:hover:not(:disabled) { background: rgba(28,92,64,.18); }
+.od-mov:disabled { opacity: .35; cursor: default; }
+.od-anuncio { min-height: 1.1rem; margin: .7rem 0 0; font: 600 .85rem/1.3 var(--texto); color: var(--verde); }
+.od-panel .jg-boton-grande + .jg-boton-grande { margin-top: .5rem; }
+.od-sol-titulo { margin: 1rem 0 .5rem; font: 700 1.05rem/1.2 var(--display); color: var(--rojo); }
+.od-sol li { padding: .5rem .7rem; font: 500 .9rem/1.4 var(--texto); background: rgba(28,92,64,.09); border-radius: 8px; }
+.od-sol b { color: var(--verde); }
+@media (prefers-reduced-motion: reduce) { .od-carta--arrastre { box-shadow: none; } }

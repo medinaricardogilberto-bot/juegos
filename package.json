@@ -1,0 +1,20 @@
+{
+  "name": "juegos-educativos-independencia",
+  "version": "0.2.0",
+  "description": "Plataforma de juegos educativos sobre la Independencia de México",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node pruebas/motores.prueba.js && node pruebas/salas.prueba.js",
+    "test:ui": "node pruebas/ui-solo.prueba.js && node pruebas/ui-online.prueba.js"
+  },
+  "dependencies": {
+    "@fontsource/fraunces": "^5.0.0",
+    "@fontsource/karla": "^5.0.0",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

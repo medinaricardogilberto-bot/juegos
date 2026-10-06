@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1f17">
+<title>Memorama · Independencia de México</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --noche:   #0b1f17;
+    --noche-2: #123324;
+    --verde:   #1c5c40;
+    --hueso:   #f4ead9;
+    --rojo:    #a52439;
+    --bronce:  #c98a3b;
+    --oro:     #e3b23c;
+    --display: "Fraunces", Georgia, serif;
+    --texto:   "Karla", "Segoe UI", sans-serif;
+
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -6%, rgba(227, 178, 60, .16), transparent 60%),
+      radial-gradient(ellipse 120% 70% at 50% 118%, rgba(28, 92, 64, .28), transparent 65%),
+      var(--noche);
+    color: var(--hueso);
+    font-family: var(--texto);
+    -webkit-font-smoothing: antialiased;
+  }
+  :root:not([data-theme="light"]) body {}
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
+
+  .no-cargado *, .no-cargado *::before, .no-cargado *::after { animation-play-state: paused !important; }
+
+  a, button { font-family: inherit; }
+
+  /* ---------------- Fondo: cielo, papel picado, cohetes ---------------- */
+  .cielo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .estrella {
+    position: absolute;
+    left: var(--x); top: var(--y);
+    width: var(--z); height: var(--z);
+    background: var(--hueso);
+    border-radius: 50%;
+    opacity: .5;
+    animation: titila var(--d) ease-in-out var(--r) infinite;
+  }
+  .cohete {
+    position: absolute; left: var(--x); top: 100%;
+    width: 3px; height: 3px; border-radius: 50%;
+    background: var(--oro);
+    box-shadow: 0 0 8px 2px var(--oro);
+    animation: lanza var(--d) ease-out var(--r) infinite;
+  }
+
+  .picado {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    height: clamp(30px, 6vw, 46px);
+    display: flex;
+    z-index: 1;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.35));
+  }
+  .picado span {
+    flex: 1 0 auto;
+    width: clamp(30px, 6vw, 46px);
+    height: 100%;
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+  }
+  .picado span:nth-child(3n+1) { background: var(--rojo); }
+  .picado span:nth-child(3n+2) { background: var(--hueso); }
+  .picado span:nth-child(3n)   { background: var(--verde); }
+
+  /* ---------------- Encabezado ---------------- */
+  .encabezado {
+    position: relative;
+    z-index: 2;
+    padding: clamp(2.6rem, 9vw, 3.4rem) 1.2rem 1rem;
+    text-align: center;
+  }
+  .ceja {
+    margin: 0 0 .3rem;
+    font: 600 .8rem/1 var(--texto);
+    letter-spacing: .04em;
+    color: var(--oro);
+  }
+  h1 {
+    margin: 0;
+    font: 700 clamp(2.1rem, 8vw, 3.1rem)/1.05 var(--display);
+    color: var(--hueso);
+  }
+  h1 em { color: var(--oro); font-style: italic; }
+  .subtitulo {
+    margin: .7rem auto 0;
+    max-width: 34ch;
+    font: 400 .98rem/1.55 var(--texto);
+    color: rgba(244, 234, 217, .72);
+  }
+
+  /* ---------------- Marcador ---------------- */
+  .marcador {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1rem, 5vw, 2.2rem);
+    margin: 1.4rem auto 0;
+    padding: 0 1rem;
+  }
+  .dato { text-align: center; }
+  .dato__num {
+    font: 700 1.5rem/1 var(--display);
+    color: var(--oro);
+    font-variant-numeric: tabular-nums;
+  }
+  .dato__label {
+    margin-top: .2rem;
+    font: 500 .68rem/1 var(--texto);
+    letter-spacing: .03em;
+    color: rgba(244, 234, 217, .55);
+  }
+
+  .reiniciar {
+    display: block;
+    margin: 1.3rem auto 0;
+    padding: .5rem 1.4rem;
+    font: 600 .88rem/1 var(--texto);
+    color: var(--noche);
+    background: var(--oro);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .reiniciar:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(227, 178, 60, .25); }
+  .reiniciar:active { transform: translateY(0); }
+  button:focus-visible { outline: 2px solid var(--oro); outline-offset: 3px; }
+
+  /* ---------------- Tablero ---------------- */
+  .tablero-envoltura {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 1.8rem 1rem clamp(2.5rem, 7vh, 4rem);
+  }
+  .tablero {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(.5rem, 2.4vw, .9rem);
+    width: min(94vw, 560px);
+  }
+
+  .carta {
+    aspect-ratio: 3 / 4;
+    perspective: 900px;
+  }
+  .carta__boton {
+    position: relative;
+    width: 100%; height: 100%;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .carta__boton[disabled] { cursor: default; }
+
+  .carta__cara {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4, .15, .2, 1);
+  }
+
+  .carta__dorso {
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.08) 0 2px, transparent 2px 9px),
+      linear-gradient(155deg, var(--verde), var(--noche-2) 60%, var(--noche));
+    border: 1px solid rgba(227, 178, 60, .35);
+    box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  }
+  .carta__dorso svg { width: 46%; height: 46%; opacity: .9; }
+
+  .carta__frente {
+    background: linear-gradient(160deg, #fbf4e3, var(--hueso) 60%, #ecdfc0);
+    border: 1px solid rgba(169, 122, 44, .4);
+    transform: rotateY(180deg);
+    padding: 10%;
+    box-shadow: 0 8px 20px rgba(0,0,0,.3);
+  }
+  .carta__frente svg { width: 100%; height: 68%; }
+  .carta__nombre {
+    margin-top: 6%;
+    font: 600 .62rem/1.2 var(--texto);
+    color: var(--noche-2);
+    text-align: center;
+  }
+
+  .carta--volteada .carta__dorso  { transform: rotateY(-180deg); }
+  .carta--volteada .carta__frente { transform: rotateY(0); }
+
+  .carta--acertada .carta__frente {
+    background: linear-gradient(160deg, #fff8e6, #f7e2ad 60%, #e9c877);
+    border-color: var(--oro);
+    box-shadow: 0 0 0 2px var(--oro), 0 8px 20px rgba(227, 178, 60, .3);
+  }
+  .carta--acertada { animation: asienta .45s ease .05s both; }
+
+  .carta--tambaleo .carta__cara { animation: tambaleo .4s ease; }
+
+  /* ---------------- Pantalla de victoria ---------------- */
+  .victoria {
+    position: fixed; inset: 0; z-index: 20;
+    display: grid; place-items: center;
+    padding: 1.2rem;
+    background: rgba(4, 10, 7, .82);
+    backdrop-filter: blur(5px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s ease;
+  }
+  .victoria.abierta { opacity: 1; pointer-events: auto; }
+  .victoria__tarjeta {
+    width: min(90vw, 380px);
+    padding: clamp(1.8rem, 6vw, 2.6rem) 1.6rem 2rem;
+    text-align: center;
+    background: linear-gradient(165deg, #fbf4e3, var(--hueso) 65%, #e9dcb9);
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  }
+  .victoria.abierta .victoria__tarjeta { animation: asienta .5s cubic-bezier(.2,.9,.3,1) both; }
+  .victoria__icono { width: 62px; height: 62px; margin: 0 auto .8rem; }
+  .victoria__titulo {
+    margin: 0;
+    font: 700 1.9rem/1.1 var(--display);
+    color: var(--rojo);
+  }
+  .victoria__texto {
+    margin: .7rem 0 1.3rem;
+    font: 400 .92rem/1.55 var(--texto);
+    color: var(--noche-2);
+  }
+  .victoria__texto b { color: var(--verde); }
+  .victoria__boton {
+    padding: .6rem 1.7rem;
+    font: 700 .95rem/1 var(--texto);
+    color: var(--hueso);
+    background: var(--verde);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+  .victoria__boton:hover { transform: translateY(-1px); background: #227249; }
+
+  /* ---------------- Animaciones ---------------- */
+  @keyframes titila { 0%, 100% { opacity: .15; } 50% { opacity: .75; } }
+  @keyframes lanza {
+    0%   { opacity: 0; transform: translateY(0); }
+    6%   { opacity: 1; }
+    55%  { opacity: 1; transform: translateY(-72vh); }
+    56%  { opacity: 0; }
+    100% { opacity: 0; transform: translateY(-72vh); }
+  }
+  @keyframes asienta {
+    from { opacity: 0; transform: scale(.85) translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes tambaleo {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-3.5deg); }
+    75% { transform: rotate(3.5deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  @media (max-width: 380px) {
+    .marcador { gap: 1rem; }
+  }
+</style>
+</head>
+<body class="no-cargado">
+
+<div class="cielo" id="cielo" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+
+<header class="encabezado">
+  <p class="ceja">16 de septiembre · Grito de Dolores</p>
+  <h1>Memorama de la <em>Independencia</em></h1>
+  <p class="subtitulo">Voltea las cartas y encuentra las ocho parejas de símbolos patrios.</p>
+</header>
+
+<div class="marcador">
+  <div class="dato"><div class="dato__num" id="num-intentos">0</div><div class="dato__label">Intentos</div></div>
+  <div class="dato"><div class="dato__num" id="num-parejas">0/8</div><div class="dato__label">Parejas</div></div>
+  <div class="dato"><div class="dato__num" id="num-tiempo">00:00</div><div class="dato__label">Tiempo</div></div>
+</div>
+
+<button class="reiniciar" id="reiniciar" type="button">Barajar de nuevo</button>
+
+<div class="tablero-envoltura">
+  <div class="tablero" id="tablero" role="grid" aria-label="Tablero del memorama"></div>
+</div>
+
+<div class="victoria" id="victoria" role="dialog" aria-modal="true" aria-labelledby="victoria-titulo" inert>
+  <div class="victoria__tarjeta">
+    <svg class="victoria__icono" viewBox="0 0 64 64" aria-hidden="true">
+      <path fill="#c98a3b" d="M32 4c-9 0-13 8-13 15 0 5 2 8 4 10-1 2-3 3-5 3v4h28v-4c-2 0-4-1-5-3 2-2 4-5 4-10 0-7-4-15-13-15Z"/>
+      <path fill="#7a5222" d="M17 36h30l3 8H14l3-8Z"/>
+      <rect x="12" y="44" width="40" height="6" rx="1" fill="#e3b23c"/>
+      <rect x="8" y="50" width="48" height="6" rx="1" fill="#a52439"/>
+    </svg>
+    <h2 class="victoria__titulo" id="victoria-titulo">¡Viva México!</h2>
+    <p class="victoria__texto">Completaste las 8 parejas en <b id="v-intentos">0</b> intentos y <b id="v-tiempo">00:00</b>.</p>
+    <button class="victoria__boton" id="v-reiniciar" type="button">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script>
+  /* =====================================================
+     ICONOGRAFÍA — ocho símbolos, dibujados en SVG propio
+     ===================================================== */
+  const ICONOS = [
+    { id: "campana", nombre: "La campana",
+      svg: `<svg viewBox="0 0 64 64"><path fill="#c98a3b" d="M32 6c-2 0-3 1-3 3v2c-9 2-14 10-14 20 0 6-2 9-5 12h44c-3-3-5-6-5-12 0-10-5-18-14-20V9c0-2-1-3-3-3Z"/>
+        <rect x="24" y="43" width="16" height="5" rx="1" fill="#7a5222"/>
+        <circle cx="32" cy="53" r="4" fill="#7a5222"/></svg>` },
+
+    { id: "bandera", nombre: "La bandera",
+      svg: `<svg viewBox="0 0 64 64"><rect x="16" y="8" width="4" height="48" fill="#7a5222"/>
+        <rect x="20" y="10" width="10" height="26" fill="#1c5c40"/>
+        <rect x="30" y="10" width="10" height="26" fill="#f4ead9"/>
+        <rect x="40" y="10" width="10" height="26" fill="#a52439"/>
+        <circle cx="35" cy="23" r="4" fill="#c98a3b"/></svg>` },
+
+    { id: "escudo", nombre: "El escudo",
+      svg: `<svg viewBox="0 0 64 64"><path fill="#1c5c40" d="M14 28c6 6 6 16 18 24 12-8 12-18 18-24-4-10-10-16-18-20-8 4-14 10-18 20Z" opacity=".18"/>
+        <path fill="#4a7d2c" d="M28 40c-4 4-4 10-2 14h12c2-4 2-10-2-14-2 2-6 2-8 0Z"/>
+        <path fill="#c98a3b" d="M20 26c2-6 6-10 12-10s10 4 12 10c-2 4-3 8-2 12-3 1-5 3-6 6-2-1-4-1-6 0-1-3-3-5-6-6 1-4 0-8-4-12Z"/>
+        <path fill="#7a5222" d="M31 16c-3 4-4 9-2 13l3-2 3 2c2-4 1-9-2-13Z"/></svg>` },
+
+    { id: "cura", nombre: "El caudillo",
+      svg: `<svg viewBox="0 0 64 64"><path fill="#2b2118" d="M16 30c0-10 7-16 16-16s16 6 16 16c-3-2-8-3-16-3s-13 1-16 3Z"/>
+        <circle cx="32" cy="30" r="12" fill="#e3b799"/>
+        <path fill="#f4ead9" d="M20 44c2-6 6-9 12-9s10 3 12 9l-2 10H22l-2-10Z"/>
+        <rect x="30" y="22" width="4" height="4" fill="#2b2118"/></svg>` },
+
+    { id: "canon", nombre: "El cañón",
+      svg: `<svg viewBox="0 0 64 64"><rect x="10" y="42" width="44" height="6" rx="2" fill="#7a5222"/>
+        <circle cx="16" cy="50" r="6" fill="#2b2118"/><circle cx="34" cy="50" r="6" fill="#2b2118"/>
+        <path fill="#4a4a4a" d="M14 40c0-9 7-18 20-18l14 6-4 8-16-4c-5 0-8 4-8 8h-6Z"/>
+        <circle cx="47" cy="30" r="4" fill="#2b2118"/></svg>` },
+
+    { id: "antorcha", nombre: "La antorcha",
+      svg: `<svg viewBox="0 0 64 64"><path fill="#e3b23c" d="M32 6c4 6 9 11 9 18 0 6-4 10-9 10s-9-4-9-10c0-7 5-12 9-18Z"/>
+        <path fill="#a52439" d="M32 12c2 4 5 7 5 12 0 4-2 7-5 7s-5-3-5-7c0-5 3-8 5-12Z"/>
+        <rect x="29" y="34" width="6" height="24" rx="2" fill="#7a5222"/>
+        <rect x="24" y="56" width="16" height="4" rx="1" fill="#4a3216"/></svg>` },
+
+    { id: "cohetes", nombre: "Los cohetes",
+      svg: `<svg viewBox="0 0 64 64"><g stroke-width="2" fill="none">
+        <path stroke="#e3b23c" d="M32 30V8"/><path stroke="#a52439" d="M20 34 10 16"/><path stroke="#1c5c40" d="M44 34 54 16"/>
+        <path stroke="#e3b23c" d="M32 30 24 16"/><path stroke="#a52439" d="M32 30 40 16"/></g>
+        <circle cx="32" cy="8" r="3" fill="#e3b23c"/><circle cx="10" cy="16" r="2.4" fill="#a52439"/>
+        <circle cx="54" cy="16" r="2.4" fill="#1c5c40"/><circle cx="24" cy="16" r="2.2" fill="#e3b23c"/><circle cx="40" cy="16" r="2.2" fill="#e3b23c"/>
+        <path fill="#7a5222" d="M28 32h8l3 26h-14l3-26Z"/></svg>` },
+
+    { id: "listón", nombre: "1810",
+      svg: `<svg viewBox="0 0 64 64"><path fill="#1c5c40" d="M8 20h16v14L16 40 8 34Z"/>
+        <path fill="#a52439" d="M56 20H40v14l8 6 8-6Z"/>
+        <rect x="16" y="18" width="32" height="20" rx="2" fill="#f4ead9"/>
+        <text x="32" y="32" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#7a5222">1810</text></svg>` }
+  ];
+
+  /* =====================================================
+     DORSO — motivo repetido de papel picado
+     ===================================================== */
+  const DORSO_SVG = `<svg viewBox="0 0 64 64"><path fill="#e3b23c" d="M32 6 40 24 58 26 44 38 48 56 32 46 16 56 20 38 6 26 24 24Z" opacity=".9"/></svg>`;
+
+  /* =====================================================
+     ESTADO Y LÓGICA DEL JUEGO
+     ===================================================== */
+  const tablero      = document.getElementById("tablero");
+  const numIntentos   = document.getElementById("num-intentos");
+  const numParejas    = document.getElementById("num-parejas");
+  const numTiempo     = document.getElementById("num-tiempo");
+  const victoria       = document.getElementById("victoria");
+
+  let volteadas = [];
+  let bloqueado = false;
+  let intentos = 0;
+  let parejas = 0;
+  let segundos = 0;
+  let cronometro = null;
+
+  function baraja(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function formatoTiempo(s) {
+    const m = String(Math.floor(s / 60)).padStart(2, "0");
+    const r = String(s % 60).padStart(2, "0");
+    return `${m}:${r}`;
+  }
+
+  function iniciarCronometro() {
+    detenerCronometro();
+    segundos = 0;
+    numTiempo.textContent = "00:00";
+    cronometro = setInterval(() => {
+      segundos++;
+      numTiempo.textContent = formatoTiempo(segundos);
+    }, 1000);
+  }
+  function detenerCronometro() { if (cronometro) clearInterval(cronometro); cronometro = null; }
+
+  function crearCarta(icono, indice) {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "carta__boton";
+    boton.setAttribute("role", "gridcell");
+    boton.setAttribute("aria-label", "Carta boca abajo");
+    boton.dataset.id = icono.id;
+    boton.dataset.indice = indice;
+
+    boton.innerHTML = `
+      <span class="carta__cara carta__dorso">${DORSO_SVG}</span>
+      <span class="carta__cara carta__frente">
+        ${icono.svg}
+        <span class="carta__nombre">${icono.nombre}</span>
+      </span>`;
+
+    boton.addEventListener("click", () => voltear(boton, icono));
+    return boton;
+  }
+
+  function construirTablero() {
+    tablero.innerHTML = "";
+    volteadas = []; bloqueado = false; intentos = 0; parejas = 0;
+    numIntentos.textContent = "0";
+    numParejas.textContent = "0/8";
+
+    const mazo = baraja([...ICONOS, ...ICONOS]);
+    mazo.forEach((icono, i) => {
+      const carta = document.createElement("div");
+      carta.className = "carta";
+      carta.appendChild(crearCarta(icono, i));
+      tablero.appendChild(carta);
+    });
+
+    iniciarCronometro();
+  }
+
+  function voltear(boton, icono) {
+    if (bloqueado) return;
+    const envoltura = boton.closest(".carta");
+    if (envoltura.classList.contains("carta--volteada") || envoltura.classList.contains("carta--acertada")) return;
+
+    envoltura.classList.add("carta--volteada");
+    boton.setAttribute("aria-label", icono.nombre);
+    volteadas.push({ envoltura, boton, icono });
+
+    if (volteadas.length === 2) {
+      intentos++;
+      numIntentos.textContent = intentos;
+      bloqueado = true;
+
+      const [a, b] = volteadas;
+      if (a.icono.id === b.icono.id) {
+        setTimeout(() => {
+          a.envoltura.classList.add("carta--acertada");
+          b.envoltura.classList.add("carta--acertada");
+          a.boton.disabled = b.boton.disabled = true;
+          parejas++;
+          numParejas.textContent = `${parejas}/8`;
+          volteadas = [];
+          bloqueado = false;
+          if (parejas === ICONOS.length) terminarJuego();
+        }, 420);
+      } else {
+        setTimeout(() => {
+          a.envoltura.classList.add("carta--tambaleo");
+          b.envoltura.classList.add("carta--tambaleo");
+        }, 550);
+        setTimeout(() => {
+          a.envoltura.classList.remove("carta--volteada", "carta--tambaleo");
+          b.envoltura.classList.remove("carta--volteada", "carta--tambaleo");
+          a.boton.setAttribute("aria-label", "Carta boca abajo");
+          b.boton.setAttribute("aria-label", "Carta boca abajo");
+          volteadas = [];
+          bloqueado = false;
+        }, 1050);
+      }
+    }
+  }
+
+  function terminarJuego() {
+    detenerCronometro();
+    document.getElementById("v-intentos").textContent = intentos;
+    document.getElementById("v-tiempo").textContent = formatoTiempo(segundos);
+    victoria.removeAttribute("inert");
+    victoria.classList.add("abierta");
+    document.getElementById("v-reiniciar").focus();
+  }
+
+  function reiniciarJuego() {
+    victoria.classList.remove("abierta");
+    victoria.setAttribute("inert", "");
+    construirTablero();
+  }
+
+  document.getElementById("reiniciar").onclick = reiniciarJuego;
+  document.getElementById("v-reiniciar").onclick = reiniciarJuego;
+
+  /* =====================================================
+     AMBIENTE: cielo estrellado, papel picado, cohetes
+     ===================================================== */
+  function estrellas(n) {
+    const c = document.getElementById("cielo");
+    for (let i = 0; i < n; i++) {
+      const e = document.createElement("i");
+      e.className = "estrella";
+      e.style.cssText =
+        `--x:${(Math.random() * 100).toFixed(1)}%;--y:${(Math.random() * 55).toFixed(1)}%;` +
+        `--z:${(1 + Math.random() * 2).toFixed(1)}px;--d:${(2.5 + Math.random() * 3).toFixed(1)}s;--r:${(-Math.random() * 4).toFixed(1)}s`;
+      c.appendChild(e);
+    }
+  }
+  function cohetes(n) {
+    const c = document.getElementById("cielo");
+    for (let i = 0; i < n; i++) {
+      const co = document.createElement("i");
+      co.className = "cohete";
+      co.style.cssText =
+        `--x:${(8 + Math.random() * 84).toFixed(1)}%;--d:${(4 + Math.random() * 3).toFixed(1)}s;--r:${(-Math.random() * 6).toFixed(1)}s`;
+      c.appendChild(co);
+    }
+  }
+  function papelPicado(n) {
+    const p = document.getElementById("picado");
+    for (let i = 0; i < n; i++) p.appendChild(document.createElement("span"));
+  }
+
+  /* =====================================================
+     ARRANQUE
+     ===================================================== */
+  papelPicado(18);
+  estrellas(36);
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) cohetes(5);
+  construirTablero();
+
+  Promise.race([
+    document.fonts ? document.fonts.ready : Promise.resolve(),
+    new Promise(r => setTimeout(r, 1200))
+  ]).then(() => document.body.classList.remove("no-cargado"));
+</script>
+</body>
+</html>

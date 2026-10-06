@@ -1,0 +1,59 @@
+/* base.css — estilo compartido (sacado de tus dos juegos) */
+@font-face { font-family: "Fraunces"; font-weight: 500; font-style: normal; font-display: swap;
+  src: url("../fuentes/fraunces/files/fraunces-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-weight: 700; font-style: normal; font-display: swap;
+  src: url("../fuentes/fraunces/files/fraunces-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-weight: 500; font-style: italic; font-display: swap;
+  src: url("../fuentes/fraunces/files/fraunces-latin-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "Karla"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("../fuentes/karla/files/karla-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Karla"; font-weight: 500; font-style: normal; font-display: swap;
+  src: url("../fuentes/karla/files/karla-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Karla"; font-weight: 700; font-style: normal; font-display: swap;
+  src: url("../fuentes/karla/files/karla-latin-700-normal.woff2") format("woff2"); }
+
+:root {
+  --noche: #0b1f17; --noche-2: #123324; --verde: #1c5c40; --hueso: #f4ead9;
+  --rojo: #a52439; --bronce: #c98a3b; --oro: #e3b23c;
+  --display: "Fraunces", Georgia, serif;
+  --texto: "Karla", "Segoe UI", sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); color-scheme: dark; }
+*, *::before, *::after { box-sizing: inherit; }
+html, body { height: 100%; }
+body {
+  margin: 0; min-height: 100%; overflow-x: hidden;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -6%, rgba(227,178,60,.16), transparent 60%),
+    radial-gradient(ellipse 120% 70% at 50% 118%, rgba(28,92,64,.28), transparent 65%),
+    var(--noche);
+  color: var(--hueso); font-family: var(--texto); -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--oro); outline-offset: 3px; }
+
+.cielo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.estrella { position: absolute; left: var(--x); top: var(--y); width: var(--z); height: var(--z);
+  border-radius: 50%; background: var(--hueso); opacity: .5; animation: titila var(--d) ease-in-out var(--r) infinite; }
+.cohete { position: absolute; left: var(--x); top: 100%; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--oro); box-shadow: 0 0 8px 2px var(--oro); animation: lanza var(--d) ease-out var(--r) infinite; }
+.picado { position: absolute; top: 0; left: 0; width: 100%; height: clamp(30px, 6vw, 46px);
+  display: flex; z-index: 1; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
+.picado span { flex: 1 0 auto; width: clamp(30px, 6vw, 46px); height: 100%; clip-path: polygon(50% 100%, 0 0, 100% 0); }
+.picado span:nth-child(3n+1) { background: var(--rojo); }
+.picado span:nth-child(3n+2) { background: var(--hueso); }
+.picado span:nth-child(3n)   { background: var(--verde); }
+
+.boton { padding: .55rem 1.3rem; font: 600 .88rem/1 var(--texto); color: var(--noche); background: var(--oro);
+  border: 0; border-radius: 999px; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.boton:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(227,178,60,.25); }
+.boton--fantasma { background: transparent; color: var(--hueso); border: 1px solid rgba(244,234,217,.4); }
+
+@keyframes titila { 0%,100% { opacity: .15; } 50% { opacity: .75; } }
+@keyframes lanza { 0% { opacity: 0; transform: translateY(0); } 6% { opacity: 1; }
+  55% { opacity: 1; transform: translateY(-72vh); } 56% { opacity: 0; } 100% { opacity: 0; transform: translateY(-72vh); } }
+@keyframes asienta { from { opacity: 0; transform: scale(.85) translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

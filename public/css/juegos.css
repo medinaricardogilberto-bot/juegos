@@ -1,0 +1,111 @@
+/* juegos.css — estilo compartido de los juegos nuevos (mismos colores, papel y tipografía que Memorama y Rompecabezas) */
+.jg { position: relative; z-index: 2; padding-bottom: 5rem; }
+.jg-encabezado { padding: clamp(2.6rem, 9vw, 3.4rem) 1.2rem .6rem; text-align: center; }
+.jg-encabezado h1 { margin: 0; font: 700 clamp(2rem, 7.5vw, 3rem)/1.05 var(--display); color: var(--hueso); }
+.jg-encabezado h1 em { color: var(--oro); font-style: italic; }
+.jg-encabezado .subtitulo { margin: .6rem auto 0; max-width: 40ch; }
+.jg-cuerpo { width: min(94vw, 760px); margin: 0 auto; }
+
+/* panel de papel (igual que las salas) */
+.jg-panel { margin: 1.2rem auto 0; padding: 1.3rem clamp(1rem, 4vw, 1.6rem) 1.5rem; color: var(--noche-2);
+  background: linear-gradient(160deg, #fbf4e3, var(--hueso) 60%, #ecdfc0); border: 1px solid rgba(169,122,44,.4);
+  border-radius: 12px; box-shadow: 0 14px 30px rgba(0,0,0,.4); animation: jg-entra .35s ease both; }
+.jg-panel__titulo { margin: 0 0 .6rem; font: 700 1.35rem/1.15 var(--display); color: var(--rojo); }
+.jg-config { max-width: 520px; text-align: left; }
+.jg-instrucciones { margin: .4rem 0 1rem; padding: .7rem .9rem; background: rgba(28,92,64,.07); border-radius: 8px; }
+.jg-instrucciones summary { cursor: pointer; font: 700 .9rem/1.3 var(--texto); color: var(--verde); }
+.jg-instrucciones ul, .jg-instrucciones ol { margin: .5rem 0 0; padding-left: 1.2rem; font: 400 .88rem/1.5 var(--texto); }
+.jg-records ol li { display: flex; justify-content: space-between; gap: 1rem; }
+.jg-segmentos { margin: 0 0 .9rem; padding: 0; border: 0; }
+.jg-segmentos legend { margin-bottom: .45rem; font: 600 .82rem/1 var(--texto); }
+.jg-segmento { display: inline-block; margin: 0 .35rem .4rem 0; }
+.jg-segmento input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.jg-segmento span { display: inline-block; min-width: 2.75rem; padding: .6rem .9rem; text-align: center; cursor: pointer;
+  font: 600 .88rem/1 var(--texto); color: var(--noche-2); background: #fffaf0; border: 1px solid rgba(18,51,36,.3); border-radius: 999px;
+  transition: background .15s ease, color .15s ease; }
+.jg-segmento input:checked + span { color: var(--hueso); background: var(--verde); border-color: var(--verde); }
+.jg-segmento input:focus-visible + span { outline: 2px solid var(--bronce); outline-offset: 2px; }
+.jg-ayuda { min-height: 1em; margin: .1rem 0 0; font: 400 .8rem/1.4 var(--texto); color: rgba(18,51,36,.7); }
+.jg-campo { margin-bottom: .8rem; }
+.jg-error { min-height: 1.2rem; margin: .2rem 0; font: 700 .85rem/1.3 var(--texto); color: var(--rojo); }
+.jg-boton-grande { display: block; width: 100%; margin-top: .6rem; padding: .85rem 1rem; font-size: 1rem; min-height: 46px; }
+.boton.boton--oscuro, .jg .boton--oscuro { background: var(--verde); color: var(--hueso); }
+.jg .boton--fantasma-oscuro { background: transparent; color: var(--noche-2); border: 1px solid rgba(18,51,36,.35); }
+.jg .boton:active { transform: translateY(0); }
+
+/* fila de datos (puntos, tiempo…) */
+.jg-datos { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(1rem, 5vw, 2.2rem); margin: 1rem auto 0; }
+.jg-dato { text-align: center; min-width: 3.5rem; }
+.jg-dato__num { font: 700 1.45rem/1 var(--display); color: var(--oro); font-variant-numeric: tabular-nums; }
+.jg-dato__label { margin-top: .25rem; font: 500 .68rem/1 var(--texto); letter-spacing: .03em; color: rgba(244,234,217,.6); }
+.jg-dato--alerta .jg-dato__num { color: #ff7a8a; }
+
+/* marcador de jugadores (multijugador local) */
+.jg-marcador-jug { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .9rem auto 0; }
+.jg-chip { display: flex; align-items: center; gap: .6rem; padding: .45rem .85rem; border-radius: 999px;
+  border: 1px solid rgba(244,234,217,.25); font: 600 .82rem/1 var(--texto); color: var(--hueso); }
+.jg-chip--activo { border-color: var(--oro); background: rgba(227,178,60,.16); box-shadow: 0 0 0 1px var(--oro); }
+.jg-chip__pts { color: var(--oro); font-variant-numeric: tabular-nums; }
+.jg-turno { margin: .8rem 0 0; text-align: center; font: 700 1.05rem/1.3 var(--display); color: var(--oro); }
+
+/* explicación histórica */
+.jg-explicacion { margin-top: 1rem; padding: .85rem 1rem; text-align: left; border-left: 4px solid var(--verde);
+  background: rgba(28,92,64,.09); border-radius: 0 8px 8px 0; font: 400 .92rem/1.55 var(--texto); color: var(--noche-2); }
+.jg-explicacion strong { color: var(--verde); }
+.jg-explicacion--mal { border-left-color: var(--rojo); background: rgba(165,36,57,.08); }
+.jg-explicacion--mal strong { color: var(--rojo); }
+.jg-etiqueta { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font: 700 .68rem/1.2 var(--texto); letter-spacing: .03em; }
+.jg-etiqueta--hecho { color: #fff; background: var(--verde); }
+.jg-etiqueta--ficcion { color: var(--noche); background: var(--oro); }
+.jg-etiqueta--neutra { color: var(--noche-2); background: rgba(18,51,36,.12); }
+
+/* capas: cortina de turno y resultados */
+.jg-capa { position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; padding: 1.2rem;
+  background: rgba(4,10,7,.88); backdrop-filter: blur(6px); animation: jg-aparece .25s ease both; overflow-y: auto; }
+.jg-cortina__caja, .jg-resultado__tarjeta { width: min(92vw, 420px); padding: clamp(1.6rem, 6vw, 2.3rem) 1.5rem 1.8rem; text-align: center;
+  color: var(--noche-2); background: linear-gradient(165deg, #fbf4e3, var(--hueso) 65%, #e9dcb9); border-radius: 14px;
+  box-shadow: 0 30px 70px rgba(0,0,0,.55); animation: asienta .45s cubic-bezier(.2,.9,.3,1) both; }
+.jg-cortina__caja h2, .jg-resultado__titulo { margin: 0; font: 700 1.8rem/1.1 var(--display); color: var(--rojo); }
+.jg-cortina__caja p { font: 400 .95rem/1.5 var(--texto); }
+.jg-cortina__caja .ceja { color: var(--bronce); }
+.jg-resultado__tarjeta { width: min(94vw, 460px); margin: auto; }
+.jg-resultado__icono { font-size: 2.8rem; line-height: 1; margin-bottom: .5rem; }
+.jg-resultado__texto { margin: .6rem 0 0; font: 400 .95rem/1.5 var(--texto); }
+.jg-resultado__datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: .5rem; margin: 1rem 0 0; }
+.jg-resultado__datos div { padding: .55rem .4rem; background: rgba(28,92,64,.08); border-radius: 8px; }
+.jg-resultado__datos dt { font: 600 .72rem/1.2 var(--texto); color: rgba(18,51,36,.7); }
+.jg-resultado__datos dd { margin: .2rem 0 0; font: 700 1.2rem/1 var(--display); color: var(--verde); }
+.jg-resultado__ranking { margin: 1rem 0 0; padding: 0; list-style: none; counter-reset: lugar; text-align: left; }
+.jg-resultado__ranking li { counter-increment: lugar; display: flex; justify-content: space-between; gap: 1rem; padding: .5rem .7rem; margin-bottom: .35rem;
+  background: rgba(28,92,64,.08); border-radius: 8px; font: 600 .95rem/1.2 var(--texto); }
+.jg-resultado__ranking li::before { content: counter(lugar) ".º"; color: var(--bronce); min-width: 1.8rem; }
+.jg-resultado__ranking li span { flex: 1; }
+.jg-resultado__ranking .jg-ganador { background: rgba(227,178,60,.3); box-shadow: inset 0 0 0 1px var(--oro); }
+.jg-resultado__logros { margin: 1rem 0 0; padding: .6rem .9rem; list-style: none; background: rgba(227,178,60,.18); border-radius: 8px;
+  font: 700 .88rem/1.6 var(--texto); color: var(--noche-2); }
+.jg-resultado__botones { margin-top: 1.1rem; }
+
+/* panel "Mi progreso" del menú */
+.progreso-menu { width: min(94vw, 980px); margin: 2rem auto 0; padding: 1rem 1.2rem; text-align: left;
+  background: rgba(4,10,7,.55); border: 1px solid rgba(244,234,217,.16); border-radius: 12px; }
+.pm-cabeza { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem 1.5rem; }
+.pm-etiqueta { margin: 0; font: 600 .75rem/1 var(--texto); color: rgba(244,234,217,.6); }
+.pm-nivel { margin: .25rem 0 0; font: 700 1.2rem/1 var(--display); color: var(--oro); }
+.pm-barra { flex: 1 1 200px; height: 8px; border-radius: 4px; background: rgba(244,234,217,.15); overflow: hidden; }
+.pm-barra div { height: 100%; background: linear-gradient(90deg, var(--verde), var(--oro)); }
+.pm-insignias { display: flex; flex-wrap: wrap; gap: .45rem; margin: .9rem 0 0; padding: 0; list-style: none; }
+.pm-insignia { display: flex; align-items: center; gap: .35rem; padding: .35rem .65rem; border-radius: 999px; font: 600 .74rem/1 var(--texto);
+  color: rgba(244,234,217,.5); border: 1px dashed rgba(244,234,217,.22); }
+.pm-insignia--si { color: var(--hueso); border: 1px solid var(--oro); background: rgba(227,178,60,.12); }
+
+/* etiqueta "Nuevo" en las tarjetas del menú y modo no disponible */
+.opcion__nuevo { display: inline-block; margin-left: .35rem; padding: .15rem .45rem; vertical-align: middle; border-radius: 999px;
+  font: 700 .62rem/1.2 var(--texto); letter-spacing: .05em; color: var(--hueso); background: var(--verde); }
+.opcion--pendiente { opacity: .62; }
+.opcion--pendiente .opcion__nombre::after { content: " · próximamente"; font: 600 .75rem/1 var(--texto); color: var(--bronce); }
+
+@keyframes jg-entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes jg-aparece { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 480px) {
+  .jg-segmento span { padding: .6rem .7rem; }
+}

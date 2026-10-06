@@ -1,0 +1,190 @@
+/* memorama.css — estilos del juego, limitados a #juego-memorama */
+#juego-memorama .encabezado {
+    position: relative;
+    z-index: 2;
+    padding: clamp(2.6rem, 9vw, 3.4rem) 1.2rem 1rem;
+    text-align: center;
+  }
+#juego-memorama .ceja {
+    margin: 0 0 .3rem;
+    font: 600 .8rem/1 var(--texto);
+    letter-spacing: .04em;
+    color: var(--oro);
+  }
+#juego-memorama h1 {
+    margin: 0;
+    font: 700 clamp(2.1rem, 8vw, 3.1rem)/1.05 var(--display);
+    color: var(--hueso);
+  }
+#juego-memorama h1 em { color: var(--oro); font-style: italic; }
+#juego-memorama .subtitulo {
+    margin: .7rem auto 0;
+    max-width: 34ch;
+    font: 400 .98rem/1.55 var(--texto);
+    color: rgba(244, 234, 217, .72);
+  }
+#juego-memorama .marcador {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1rem, 5vw, 2.2rem);
+    margin: 1.4rem auto 0;
+    padding: 0 1rem;
+  }
+#juego-memorama .dato { text-align: center; }
+#juego-memorama .dato__num {
+    font: 700 1.5rem/1 var(--display);
+    color: var(--oro);
+    font-variant-numeric: tabular-nums;
+  }
+#juego-memorama .dato__label {
+    margin-top: .2rem;
+    font: 500 .68rem/1 var(--texto);
+    letter-spacing: .03em;
+    color: rgba(244, 234, 217, .55);
+  }
+#juego-memorama .reiniciar {
+    display: block;
+    margin: 1.3rem auto 0;
+    padding: .5rem 1.4rem;
+    font: 600 .88rem/1 var(--texto);
+    color: var(--noche);
+    background: var(--oro);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+#juego-memorama .reiniciar:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(227, 178, 60, .25); }
+#juego-memorama .reiniciar:active { transform: translateY(0); }
+#juego-memorama .tablero-envoltura {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 1.8rem 1rem clamp(2.5rem, 7vh, 4rem);
+  }
+#juego-memorama .tablero {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(.5rem, 2.4vw, .9rem);
+    width: min(94vw, 560px);
+  }
+#juego-memorama .carta {
+    aspect-ratio: 3 / 4;
+    perspective: 900px;
+  }
+#juego-memorama .carta__boton {
+    position: relative;
+    width: 100%; height: 100%;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+#juego-memorama .carta__boton[disabled] { cursor: default; }
+#juego-memorama .carta__cara {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4, .15, .2, 1);
+  }
+#juego-memorama .carta__dorso {
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.08) 0 2px, transparent 2px 9px),
+      linear-gradient(155deg, var(--verde), var(--noche-2) 60%, var(--noche));
+    border: 1px solid rgba(227, 178, 60, .35);
+    box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  }
+#juego-memorama .carta__dorso svg { width: 46%; height: 46%; opacity: .9; }
+#juego-memorama .carta__frente {
+    background: linear-gradient(160deg, #fbf4e3, var(--hueso) 60%, #ecdfc0);
+    border: 1px solid rgba(169, 122, 44, .4);
+    transform: rotateY(180deg);
+    padding: 10%;
+    box-shadow: 0 8px 20px rgba(0,0,0,.3);
+  }
+#juego-memorama .carta__frente svg { width: 100%; height: 68%; }
+#juego-memorama .carta__nombre {
+    margin-top: 6%;
+    font: 600 .62rem/1.2 var(--texto);
+    color: var(--noche-2);
+    text-align: center;
+  }
+#juego-memorama .carta--volteada .carta__dorso { transform: rotateY(-180deg); }
+#juego-memorama .carta--volteada .carta__frente { transform: rotateY(0); }
+#juego-memorama .carta--acertada .carta__frente {
+    background: linear-gradient(160deg, #fff8e6, #f7e2ad 60%, #e9c877);
+    border-color: var(--oro);
+    box-shadow: 0 0 0 2px var(--oro), 0 8px 20px rgba(227, 178, 60, .3);
+  }
+#juego-memorama .carta--acertada { animation: asienta .45s ease .05s both; }
+#juego-memorama .carta--tambaleo .carta__cara { animation: tambaleo .4s ease; }
+#juego-memorama .victoria {
+    position: fixed; inset: 0; z-index: 20;
+    display: grid; place-items: center;
+    padding: 1.2rem;
+    background: rgba(4, 10, 7, .82);
+    backdrop-filter: blur(5px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s ease;
+  }
+#juego-memorama .victoria.abierta { opacity: 1; pointer-events: auto; }
+#juego-memorama .victoria__tarjeta {
+    width: min(90vw, 380px);
+    padding: clamp(1.8rem, 6vw, 2.6rem) 1.6rem 2rem;
+    text-align: center;
+    background: linear-gradient(165deg, #fbf4e3, var(--hueso) 65%, #e9dcb9);
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  }
+#juego-memorama .victoria.abierta .victoria__tarjeta { animation: asienta .5s cubic-bezier(.2,.9,.3,1) both; }
+#juego-memorama .victoria__icono { width: 62px; height: 62px; margin: 0 auto .8rem; }
+#juego-memorama .victoria__titulo {
+    margin: 0;
+    font: 700 1.9rem/1.1 var(--display);
+    color: var(--rojo);
+  }
+#juego-memorama .victoria__texto {
+    margin: .7rem 0 1.3rem;
+    font: 400 .92rem/1.55 var(--texto);
+    color: var(--noche-2);
+  }
+#juego-memorama .victoria__texto b { color: var(--verde); }
+#juego-memorama .victoria__boton {
+    padding: .6rem 1.7rem;
+    font: 700 .95rem/1 var(--texto);
+    color: var(--hueso);
+    background: var(--verde);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+#juego-memorama .victoria__boton:hover { transform: translateY(-1px); background: #227249; }
+@keyframes tambaleo {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-3.5deg); }
+    75% { transform: rotate(3.5deg); }
+  }
+@media (max-width: 380px) {
+#juego-memorama .marcador { gap: 1rem; }
+}
+
+/* ---- multijugador (paso 4) ---- */
+#juego-memorama .mm-barra { position: relative; z-index: 2; margin: 1.1rem auto 0; padding: 0 1rem; text-align: center; }
+#juego-memorama .mm-turno { font: 700 1.1rem/1.2 var(--display); color: rgba(244,234,217,.8); }
+#juego-memorama .mm-turno--mio { color: #3ddc84; }
+#juego-memorama .mm-jugadores { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: .7rem; }
+#juego-memorama .mm-jugador { display: flex; align-items: center; gap: .6rem; padding: .4rem .8rem; border-radius: 999px;
+  border: 1px solid rgba(244,234,217,.25); font: 600 .8rem/1 var(--texto); }
+#juego-memorama .mm-jugador--turno { border-color: var(--oro); background: rgba(227,178,60,.14); }
+#juego-memorama .mm-jugador__pts { color: var(--oro); font-variant-numeric: tabular-nums; }
+#juego-memorama .mm-bloqueado { pointer-events: none; }
+#juego-memorama .mm-bloqueado .carta__dorso { opacity: .82; }
+#juego-memorama .victoria__texto div { text-align: left; }
+#juego-memorama .mm-jugador--ausente { opacity: .45; }

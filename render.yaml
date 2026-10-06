@@ -1,0 +1,15 @@
+# EJEMPLO opcional: servidor de salas en Render (plan gratuito). Solo si eliges Render como hosting del servidor.
+# Cualquier otro hosting con Node.js (VPS, cPanel "Node.js App", Railway, Fly, etc.) funciona igual: ver DESPLIEGUE.md.
+services:
+  - type: web
+    name: juegos-independencia-salas
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /salud
+    envVars:
+      - key: ORIGENES_PERMITIDOS
+        sync: false        # solo si el sitio estático está en otro dominio: la dirección de tu sitio
+      - key: GRACIA_MS
+        value: "60000"

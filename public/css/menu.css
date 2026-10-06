@@ -1,0 +1,72 @@
+/* menu.css — menú principal y selección de modo */
+.pantalla { position: relative; z-index: 2; display: none; min-height: 100%; padding: clamp(3rem, 10vw, 4rem) 1.2rem 2.5rem; text-align: center; }
+.pantalla.activa { display: block; }
+.ceja { margin: 0 0 .3rem; font: 600 .8rem/1 var(--texto); letter-spacing: .04em; color: var(--oro); }
+h1 { margin: 0; font: 700 clamp(2.3rem, 9vw, 3.6rem)/1.05 var(--display); }
+h1 em { color: var(--oro); font-style: italic; }
+h2.titulo-modo { margin: 0; font: 700 clamp(1.7rem, 6vw, 2.3rem)/1.1 var(--display); }
+.subtitulo { margin: .8rem auto 0; max-width: 36ch; font: 400 1rem/1.55 var(--texto); color: rgba(244,234,217,.72); }
+
+.opciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.1rem; margin: 2rem auto 0; max-width: 620px; }
+#pantalla-menu .opciones { max-width: 980px; }
+#pantalla-menu .opcion { flex: 1 1 260px; max-width: 320px; }
+.opcion { flex: 1 1 250px; padding: 1.5rem 1.2rem 1.4rem; cursor: pointer; text-align: center;
+  color: var(--noche-2); font-family: var(--texto);
+  background: linear-gradient(160deg, #fbf4e3, var(--hueso) 60%, #ecdfc0);
+  border: 1px solid rgba(169,122,44,.4); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  transition: transform .18s ease, box-shadow .18s ease; }
+.opcion:hover { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--oro), 0 14px 28px rgba(0,0,0,.4); }
+.opcion__icono { font-size: 2.4rem; line-height: 1; }
+.opcion__nombre { display: block; margin-top: .6rem; font: 700 1.35rem/1.1 var(--display); color: var(--rojo); }
+.opcion__desc { display: block; margin-top: .4rem; font: 400 .88rem/1.45 var(--texto); }
+.opcion--modo { flex-basis: 100%; display: flex; align-items: center; gap: 1rem; text-align: left; padding: 1rem 1.2rem; }
+.opcion--modo .opcion__icono { font-size: 1.9rem; }
+.opcion--modo .opcion__nombre { margin: 0; font-size: 1.15rem; }
+.opcion--modo .opcion__desc { margin: .15rem 0 0; }
+
+.aviso { min-height: 1.4rem; margin: 1.2rem auto 0; max-width: 40ch; font: 500 .9rem/1.4 var(--texto); color: var(--oro); }
+.volver { margin-top: 1.4rem; }
+
+.estado { position: fixed; z-index: 5; right: .8rem; bottom: .8rem; display: flex; align-items: center; gap: .5rem;
+  padding: .4rem .8rem; font: 500 .74rem/1 var(--texto); color: rgba(244,234,217,.8);
+  background: rgba(4,10,7,.65); border: 1px solid rgba(244,234,217,.18); border-radius: 999px; }
+.estado__punto { width: 9px; height: 9px; border-radius: 50%; background: #777; }
+.estado--si .estado__punto { background: #3ddc84; box-shadow: 0 0 6px #3ddc84; }
+.estado--no .estado__punto { background: var(--rojo); }
+
+/* pantalla donde se monta el juego */
+.pantalla--juego { padding: 0; text-align: left; }
+.volver-juego { position: fixed; z-index: 30; left: .8rem; bottom: .8rem; background: rgba(4,10,7,.75); }
+
+/* ---- salas (paso 3) ---- */
+[hidden] { display: none !important; }
+.panel { width: min(92vw, 400px); margin: 1.6rem auto 0; padding: 1.4rem 1.3rem 1.5rem; text-align: center; color: var(--noche-2);
+  background: linear-gradient(160deg, #fbf4e3, var(--hueso) 60%, #ecdfc0); border: 1px solid rgba(169,122,44,.4);
+  border-radius: 12px; box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+.panel .boton { display: block; width: 100%; margin-top: .8rem; padding: .75rem 1rem; font-size: .95rem; }
+.boton--oscuro { background: var(--verde); color: var(--hueso); }
+.boton--oscuro:hover { box-shadow: 0 8px 18px rgba(28,92,64,.35); }
+.boton--fantasma-oscuro { background: transparent; color: var(--noche-2); border: 1px solid rgba(18,51,36,.35); }
+.boton:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+.campo { display: block; text-align: left; font: 600 .82rem/1 var(--texto); color: var(--noche-2); }
+.campo input { display: block; width: 100%; margin-top: .4rem; padding: .7rem .8rem; font: 500 1rem/1 var(--texto);
+  color: var(--noche); background: #fffaf0; border: 1px solid rgba(18,51,36,.35); border-radius: 8px; }
+.campo__codigo { text-transform: uppercase; letter-spacing: .3em; text-align: center; font-family: var(--display); font-size: 1.3rem !important; }
+.separador { margin: 1.1rem 0 .9rem; font: 500 .8rem/1 var(--texto); color: rgba(18,51,36,.65); }
+.panel__etiqueta { margin: .2rem 0 0; font: 600 .78rem/1.2 var(--texto); color: rgba(18,51,36,.7); }
+.codigo { margin: .3rem 0; font: 700 2.6rem/1.1 var(--display); letter-spacing: .18em; color: var(--rojo); }
+.pista { margin: .5rem 0; font: 400 .84rem/1.45 var(--texto); color: var(--noche-2); }
+.pista--aviso { min-height: 1.3rem; font-weight: 700; color: var(--verde); }
+.jugadores { list-style: none; margin: .6rem 0; padding: 0; }
+.jugador { display: flex; align-items: center; gap: .6rem; padding: .55rem .7rem; margin-bottom: .4rem; text-align: left;
+  background: rgba(28,92,64,.08); border-radius: 8px; font: 600 .95rem/1 var(--texto); }
+.jugador__avatar { font-size: 1.3rem; }
+.jugador__nombre { flex: 1; overflow-wrap: anywhere; }
+.jugador--ausente { opacity: .5; }
+
+/* aviso flotante (desconexiones, etc.) */
+.toast { position: fixed; z-index: 40; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 56px); max-width: min(92vw, 420px);
+  padding: .6rem 1rem; text-align: center; font: 600 .88rem/1.35 var(--texto); color: var(--hueso);
+  background: rgba(4,10,7,.92); border: 1px solid var(--oro); border-radius: 12px; box-shadow: 0 8px 22px rgba(0,0,0,.45);
+  opacity: 0; transform: translate(-50%, -8px); pointer-events: none; transition: opacity .25s ease, transform .25s ease; }
+.toast.visible { opacity: 1; transform: translate(-50%, 0); }

@@ -1,0 +1,21 @@
+/* quiensoy.css — ¿Quién soy? */
+.qs-panel { max-width: 640px; }
+.qs-cabeza { display: flex; align-items: center; gap: 1rem; margin-bottom: .9rem; }
+.qs-silueta, .qs-medallon { flex: none; position: relative; display: grid; place-items: center; width: 92px; height: 108px; overflow: hidden; border-radius: 12px 12px 46px 46px;
+  background: linear-gradient(160deg, #20483a, #123324); border: 2px solid var(--bronce); }
+.qs-silueta svg { position: absolute; inset: 8px 12px 0; fill: rgba(244,234,217,.2); }
+.qs-silueta span { position: relative; font: 700 2rem/1 var(--display); color: var(--oro); }
+.qs-medallon { font-size: 3rem; animation: qs-gira .5s ease both; }
+.qs-titulo h2 { margin: .35rem 0 0; font: 700 clamp(1.3rem, 5vw, 1.8rem)/1.15 var(--display); color: var(--rojo); }
+.qs-pistas { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.qs-pista { display: flex; gap: .7rem; align-items: flex-start; padding: .6rem .8rem; font: 500 .95rem/1.45 var(--texto); color: var(--noche-2);
+  background: rgba(28,92,64,.09); border-left: 4px solid var(--verde); border-radius: 0 8px 8px 0; animation: qs-pista .35s ease both; }
+.qs-pista--extra { opacity: .6; border-left-color: rgba(18,51,36,.3); }
+.qs-pista__n { flex: none; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; font: 700 .78rem/1 var(--display); color: var(--hueso); background: var(--verde); }
+.qs-respuesta { display: flex; gap: .5rem; margin-top: .9rem; flex-wrap: wrap; }
+.qs-input { flex: 1 1 14rem; min-height: 46px; padding: .6rem .8rem; font: 500 1rem/1.2 var(--texto); color: var(--noche-2); background: #fffaf0; border: 2px solid rgba(18,51,36,.35); border-radius: 10px; }
+.qs-input:focus-visible { outline: 3px solid var(--bronce); outline-offset: 2px; }
+.qs-botones { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+@keyframes qs-pista { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes qs-gira { from { transform: rotateY(90deg); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .qs-pista, .qs-medallon { animation: none; } }

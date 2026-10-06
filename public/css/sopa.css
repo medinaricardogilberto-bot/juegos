@@ -1,0 +1,23 @@
+/* sopa.css — Sopa de letras */
+.sp-panel { max-width: 620px; }
+.sp-tablero { display: grid; gap: 2px; padding: 6px; margin: 0 auto; width: min(100%, 560px); touch-action: none; user-select: none; -webkit-user-select: none;
+  background: #2a2318; border: 3px solid var(--bronce); border-radius: 10px; }
+.sp-tablero:focus-visible { outline: 3px solid var(--oro); outline-offset: 3px; }
+.sp-tablero--inactivo { opacity: .75; }
+.sp-celda { display: grid; place-items: center; aspect-ratio: 1; cursor: pointer; font: 700 clamp(.7rem, calc(78vw / var(--n) * .5), 1.35rem)/1 var(--display);
+  color: #2a2318; background: #f4ead9; border-radius: 4px; transition: background .12s ease; }
+.sp-sel { background: var(--oro); }
+.sp-cursor { outline: 3px solid var(--rojo); outline-offset: -3px; }
+.sp-pista { background: #ffe29a; box-shadow: inset 0 0 0 2px var(--bronce); }
+.sp-h0 { background: #9fd3b4; } .sp-h1 { background: #f1b6a8; } .sp-h2 { background: #b8c7ee; } .sp-h3 { background: #e9d38a; }
+.sp-ok { animation: sp-bien .6s ease; } .sp-no { animation: sp-mal .4s ease; } .sp-rep { animation: sp-bien .6s ease; }
+.sp-mensaje { min-height: 2.6em; margin: .7rem 0 .4rem; padding: .5rem .7rem; font: 600 .88rem/1.4 var(--texto); color: var(--noche-2); background: rgba(18,51,36,.07); border-radius: 8px; }
+.sp-mensaje--ok { background: rgba(28,92,64,.16); color: var(--verde); }
+.sp-mensaje--no { background: rgba(165,36,57,.1); color: var(--rojo); }
+.sp-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+.sp-palabra { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .6rem; padding: .4rem .6rem; font: 600 .9rem/1.3 var(--texto); color: var(--noche-2); background: rgba(18,51,36,.06); border-radius: 6px; }
+.sp-palabra small { font: 400 .78rem/1.3 var(--texto); color: rgba(18,51,36,.75); }
+.sp-palabra--ok { color: var(--verde); background: rgba(28,92,64,.12); }
+@keyframes sp-bien { 0%,100% { transform: none; } 40% { transform: scale(1.12); } }
+@keyframes sp-mal { 0%,100% { transform: none; } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .sp-ok, .sp-no, .sp-rep { animation: none; } }

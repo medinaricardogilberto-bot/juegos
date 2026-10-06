@@ -1,0 +1,113 @@
+/* rompecabezas.css — estilos del juego, limitados a #juego-rompecabezas */
+#juego-rompecabezas .encabezado { position: relative; z-index: 2; padding: clamp(2.4rem, 8vw, 3.2rem) 1.2rem .4rem; text-align: center; }
+#juego-rompecabezas .ceja { margin: 0 0 .3rem; font: 600 .8rem/1 var(--texto); letter-spacing: .04em; color: var(--oro); }
+#juego-rompecabezas h1 { margin: 0; font: 700 clamp(1.9rem, 7.4vw, 2.7rem)/1.08 var(--display); color: var(--hueso); }
+#juego-rompecabezas h1 em { color: var(--oro); font-style: italic; }
+#juego-rompecabezas .subtitulo { margin: .65rem auto 0; max-width: 32ch; font: 400 .94rem/1.55 var(--texto); color: rgba(244, 234, 217, .72); }
+#juego-rompecabezas .marcador { position: relative; z-index: 2; display: flex; justify-content: center; gap: clamp(1.2rem, 6vw, 2.4rem); margin: 1.1rem auto 0; padding: 0 1rem; }
+#juego-rompecabezas .dato { text-align: center; }
+#juego-rompecabezas .dato__num { font: 700 1.4rem/1 var(--display); color: var(--oro); font-variant-numeric: tabular-nums; }
+#juego-rompecabezas .dato__label { margin-top: .2rem; font: 500 .66rem/1 var(--texto); letter-spacing: .03em; color: rgba(244, 234, 217, .55); }
+#juego-rompecabezas .controles { position: relative; z-index: 2; display: flex; justify-content: center; gap: .7rem; margin: 1.1rem auto 0; padding: 0 1rem; flex-wrap: wrap; }
+#juego-rompecabezas .boton {
+    padding: .5rem 1.2rem; font: 600 .84rem/1 var(--texto); color: var(--noche);
+    background: var(--oro); border: 0; border-radius: 999px; cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+#juego-rompecabezas .boton:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(227, 178, 60, .25); }
+#juego-rompecabezas .boton:active { transform: translateY(0); }
+#juego-rompecabezas .boton--fantasma { background: transparent; color: var(--hueso); border: 1px solid rgba(244, 234, 217, .4); }
+#juego-rompecabezas .campo-envoltura { position: relative; z-index: 2; display: flex; justify-content: center; padding: 1.6rem 1rem clamp(2.4rem, 7vh, 3.6rem); }
+#juego-rompecabezas .campo {
+    position: relative;
+    width: min(92vw, 420px);
+    touch-action: none;
+  }
+#juego-rompecabezas .guia {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.15));
+    border: 1px dashed rgba(227, 178, 60, .35);
+  }
+#juego-rompecabezas .guia__imagen {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: .3;
+    transition: opacity .3s ease;
+  }
+#juego-rompecabezas .guia__imagen.oculta { opacity: 0; }
+#juego-rompecabezas .guia__rejilla {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(244,234,217,.16) 0 1px, transparent 1px calc(100%/3)),
+      repeating-linear-gradient(0deg, rgba(244,234,217,.16) 0 1px, transparent 1px calc(100%/4));
+  }
+#juego-rompecabezas .bandeja-etiqueta {
+    margin: 1.1rem 0 .6rem;
+    text-align: center;
+    font: 500 .78rem/1 var(--texto);
+    color: rgba(244, 234, 217, .5);
+  }
+#juego-rompecabezas .pieza {
+    position: absolute;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+#juego-rompecabezas .pieza canvas { display: block; width: 100%; height: 100%; }
+#juego-rompecabezas .pieza:active { cursor: grabbing; }
+#juego-rompecabezas .pieza--fija { filter: none; cursor: default; }
+#juego-rompecabezas .victoria {
+    position: fixed; inset: 0; z-index: 20;
+    display: grid; place-items: center; padding: 1.2rem;
+    background: rgba(4, 10, 7, .82);
+    backdrop-filter: blur(5px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s ease;
+  }
+#juego-rompecabezas .victoria.abierta { opacity: 1; pointer-events: auto; }
+#juego-rompecabezas .victoria__tarjeta {
+    width: min(90vw, 380px);
+    padding: clamp(1.8rem, 6vw, 2.6rem) 1.6rem 2rem;
+    text-align: center;
+    background: linear-gradient(165deg, #fbf4e3, var(--hueso) 65%, #e9dcb9);
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  }
+#juego-rompecabezas .victoria.abierta .victoria__tarjeta { animation: asienta .5s cubic-bezier(.2,.9,.3,1) both; }
+#juego-rompecabezas .victoria__icono { width: 58px; height: 58px; margin: 0 auto .7rem; }
+#juego-rompecabezas .victoria__titulo { margin: 0; font: 700 1.8rem/1.1 var(--display); color: var(--rojo); }
+#juego-rompecabezas .victoria__texto { margin: .7rem 0 1.3rem; font: 400 .92rem/1.55 var(--texto); color: var(--noche-2); }
+#juego-rompecabezas .victoria__texto b { color: var(--verde); }
+#juego-rompecabezas .victoria__boton {
+    padding: .6rem 1.7rem; font: 700 .95rem/1 var(--texto); color: var(--hueso);
+    background: var(--verde); border: 0; border-radius: 999px; cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+#juego-rompecabezas .victoria__boton:hover { transform: translateY(-1px); background: #227249; }
+@keyframes encaja { 0% { transform: scale(1.12); } 60% { transform: scale(.96); } 100% { transform: scale(1); } }
+#juego-rompecabezas .pieza--fija canvas { animation: encaja .28s ease; }
+
+/* ---- multijugador (paso 5) ---- */
+#juego-rompecabezas .campo { position: relative; }
+#juego-rompecabezas .rc-barra { position: relative; z-index: 2; margin: 1.1rem auto 0; padding: 0 1rem; text-align: center; }
+#juego-rompecabezas .rc-estado { min-height: 1.3rem; font: 700 1rem/1.3 var(--display); color: var(--oro); }
+#juego-rompecabezas .rc-jugadores { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: .7rem; }
+#juego-rompecabezas .rc-jugador { display: grid; gap: .35rem; min-width: 150px; padding: .5rem .8rem; border-radius: 12px;
+  border: 1px solid rgba(244,234,217,.25); font: 600 .8rem/1.2 var(--texto); text-align: left; }
+#juego-rompecabezas .rc-jugador--yo { border-color: var(--oro); background: rgba(227,178,60,.12); }
+#juego-rompecabezas .rc-jugador__pts { color: var(--oro); font-variant-numeric: tabular-nums; }
+#juego-rompecabezas .rc-prog { height: 5px; border-radius: 3px; background: rgba(244,234,217,.15); overflow: hidden; }
+#juego-rompecabezas .rc-prog div { height: 100%; background: #3ddc84; transition: width .3s ease; }
+#juego-rompecabezas .rc-bloqueado .pieza { pointer-events: none; }
+#juego-rompecabezas .rc-cuenta { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center;
+  font: 700 6rem/1 var(--display); color: var(--oro); background: rgba(4,10,7,.6); border-radius: 12px; }
+#juego-rompecabezas .victoria__texto div { text-align: left; }
+#juego-rompecabezas .rc-jugador--ausente { opacity: .45; }

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1f17">
+<title>Rompecabezas · Independencia de México</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --noche:   #0b1f17;
+    --noche-2: #123324;
+    --verde:   #1c5c40;
+    --hueso:   #f4ead9;
+    --rojo:    #a52439;
+    --bronce:  #c98a3b;
+    --oro:     #e3b23c;
+    --display: "Fraunces", Georgia, serif;
+    --texto:   "Karla", "Segoe UI", sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -6%, rgba(227, 178, 60, .16), transparent 60%),
+      radial-gradient(ellipse 120% 70% at 50% 118%, rgba(28, 92, 64, .28), transparent 65%),
+      var(--noche);
+    color: var(--hueso);
+    font-family: var(--texto);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
+
+  .no-cargado *, .no-cargado *::before, .no-cargado *::after { animation-play-state: paused !important; }
+
+  button { font-family: inherit; }
+  button:focus-visible { outline: 2px solid var(--oro); outline-offset: 3px; }
+
+  /* ---------------- Fondo ---------------- */
+  .cielo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .estrella {
+    position: absolute; left: var(--x); top: var(--y);
+    width: var(--z); height: var(--z); border-radius: 50%;
+    background: var(--hueso); opacity: .5;
+    animation: titila var(--d) ease-in-out var(--r) infinite;
+  }
+  .picado {
+    position: absolute; top: 0; left: 0; width: 100%;
+    height: clamp(26px, 5.5vw, 40px);
+    display: flex; z-index: 1;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.35));
+  }
+  .picado span { flex: 1 0 auto; width: clamp(26px, 5.5vw, 40px); height: 100%; clip-path: polygon(50% 100%, 0 0, 100% 0); }
+  .picado span:nth-child(3n+1) { background: var(--rojo); }
+  .picado span:nth-child(3n+2) { background: var(--hueso); }
+  .picado span:nth-child(3n)   { background: var(--verde); }
+
+  /* ---------------- Encabezado ---------------- */
+  .encabezado { position: relative; z-index: 2; padding: clamp(2.4rem, 8vw, 3.2rem) 1.2rem .4rem; text-align: center; }
+  .ceja { margin: 0 0 .3rem; font: 600 .8rem/1 var(--texto); letter-spacing: .04em; color: var(--oro); }
+  h1 { margin: 0; font: 700 clamp(1.9rem, 7.4vw, 2.7rem)/1.08 var(--display); color: var(--hueso); }
+  h1 em { color: var(--oro); font-style: italic; }
+  .subtitulo { margin: .65rem auto 0; max-width: 32ch; font: 400 .94rem/1.55 var(--texto); color: rgba(244, 234, 217, .72); }
+
+  /* ---------------- Marcador y controles ---------------- */
+  .marcador { position: relative; z-index: 2; display: flex; justify-content: center; gap: clamp(1.2rem, 6vw, 2.4rem); margin: 1.1rem auto 0; padding: 0 1rem; }
+  .dato { text-align: center; }
+  .dato__num { font: 700 1.4rem/1 var(--display); color: var(--oro); font-variant-numeric: tabular-nums; }
+  .dato__label { margin-top: .2rem; font: 500 .66rem/1 var(--texto); letter-spacing: .03em; color: rgba(244, 234, 217, .55); }
+
+  .controles { position: relative; z-index: 2; display: flex; justify-content: center; gap: .7rem; margin: 1.1rem auto 0; padding: 0 1rem; flex-wrap: wrap; }
+  .boton {
+    padding: .5rem 1.2rem; font: 600 .84rem/1 var(--texto); color: var(--noche);
+    background: var(--oro); border: 0; border-radius: 999px; cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .boton:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(227, 178, 60, .25); }
+  .boton:active { transform: translateY(0); }
+  .boton--fantasma { background: transparent; color: var(--hueso); border: 1px solid rgba(244, 234, 217, .4); }
+
+  /* ---------------- Campo de juego ---------------- */
+  .campo-envoltura { position: relative; z-index: 2; display: flex; justify-content: center; padding: 1.6rem 1rem clamp(2.4rem, 7vh, 3.6rem); }
+  .campo {
+    position: relative;
+    width: min(92vw, 420px);
+    touch-action: none;
+  }
+
+  .guia {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.15));
+    border: 1px dashed rgba(227, 178, 60, .35);
+  }
+  .guia__imagen {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: .3;
+    transition: opacity .3s ease;
+  }
+  .guia__imagen.oculta { opacity: 0; }
+  .guia__rejilla {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(244,234,217,.16) 0 1px, transparent 1px calc(100%/3)),
+      repeating-linear-gradient(0deg, rgba(244,234,217,.16) 0 1px, transparent 1px calc(100%/4));
+  }
+
+  .bandeja-etiqueta {
+    margin: 1.1rem 0 .6rem;
+    text-align: center;
+    font: 500 .78rem/1 var(--texto);
+    color: rgba(244, 234, 217, .5);
+  }
+
+  .pieza {
+    position: absolute;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pieza canvas { display: block; width: 100%; height: 100%; }
+  .pieza:active { cursor: grabbing; }
+  .pieza--fija { filter: none; cursor: default; }
+
+  /* ---------------- Victoria ---------------- */
+  .victoria {
+    position: fixed; inset: 0; z-index: 20;
+    display: grid; place-items: center; padding: 1.2rem;
+    background: rgba(4, 10, 7, .82);
+    backdrop-filter: blur(5px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s ease;
+  }
+  .victoria.abierta { opacity: 1; pointer-events: auto; }
+  .victoria__tarjeta {
+    width: min(90vw, 380px);
+    padding: clamp(1.8rem, 6vw, 2.6rem) 1.6rem 2rem;
+    text-align: center;
+    background: linear-gradient(165deg, #fbf4e3, var(--hueso) 65%, #e9dcb9);
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  }
+  .victoria.abierta .victoria__tarjeta { animation: asienta .5s cubic-bezier(.2,.9,.3,1) both; }
+  .victoria__icono { width: 58px; height: 58px; margin: 0 auto .7rem; }
+  .victoria__titulo { margin: 0; font: 700 1.8rem/1.1 var(--display); color: var(--rojo); }
+  .victoria__texto { margin: .7rem 0 1.3rem; font: 400 .92rem/1.55 var(--texto); color: var(--noche-2); }
+  .victoria__texto b { color: var(--verde); }
+  .victoria__boton {
+    padding: .6rem 1.7rem; font: 700 .95rem/1 var(--texto); color: var(--hueso);
+    background: var(--verde); border: 0; border-radius: 999px; cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+  .victoria__boton:hover { transform: translateY(-1px); background: #227249; }
+
+  /* ---------------- Animaciones ---------------- */
+  @keyframes titila { 0%, 100% { opacity: .15; } 50% { opacity: .75; } }
+  @keyframes asienta { from { opacity: 0; transform: scale(.85) translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes encaja { 0% { transform: scale(1.12); } 60% { transform: scale(.96); } 100% { transform: scale(1); } }
+  .pieza--fija canvas { animation: encaja .28s ease; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body class="no-cargado">
+
+<div class="cielo" id="cielo" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+
+<header class="encabezado">
+  <p class="ceja">16 de septiembre · 1810</p>
+  <h1>Rompecabezas de la <em>Independencia</em></h1>
+  <p class="subtitulo">Arrastra las piezas y encájalas en su lugar para armar la escena.</p>
+</header>
+
+<div class="marcador">
+  <div class="dato"><div class="dato__num" id="num-piezas">0/12</div><div class="dato__label">Piezas</div></div>
+  <div class="dato"><div class="dato__num" id="num-tiempo">00:00</div><div class="dato__label">Tiempo</div></div>
+</div>
+
+<div class="controles">
+  <button class="boton" id="reiniciar" type="button">Barajar de nuevo</button>
+  <button class="boton boton--fantasma" id="alternar-guia" type="button">Ocultar guía</button>
+</div>
+
+<div class="campo-envoltura">
+  <div class="campo" id="campo">
+    <div class="guia" id="guia">
+      <div class="guia__imagen" id="guia-imagen"></div>
+      <div class="guia__rejilla" aria-hidden="true"></div>
+    </div>
+    <p class="bandeja-etiqueta">Piezas para armar</p>
+    <!-- las piezas se insertan aquí por JS, posicionadas de forma absoluta -->
+  </div>
+</div>
+
+<div class="victoria" id="victoria" role="dialog" aria-modal="true" aria-labelledby="victoria-titulo" inert>
+  <div class="victoria__tarjeta">
+    <svg class="victoria__icono" viewBox="0 0 64 64" aria-hidden="true">
+      <path fill="#c98a3b" d="M32 4c-9 0-13 8-13 15 0 5 2 8 4 10-1 2-3 3-5 3v4h28v-4c-2 0-4-1-5-3 2-2 4-5 4-10 0-7-4-15-13-15Z"/>
+      <path fill="#7a5222" d="M17 36h30l3 8H14l3-8Z"/>
+      <rect x="12" y="44" width="40" height="6" rx="1" fill="#e3b23c"/>
+      <rect x="8" y="50" width="48" height="6" rx="1" fill="#a52439"/>
+    </svg>
+    <h2 class="victoria__titulo" id="victoria-titulo">¡Viva México!</h2>
+    <p class="victoria__texto">Armaste el rompecabezas en <b id="v-tiempo">00:00</b>.</p>
+    <button class="victoria__boton" id="v-reiniciar" type="button">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script>
+  /* =====================================================
+     ESCENA — arte original que se corta en piezas
+     ===================================================== */
+  function escenaSVG(W, H) {
+    let estrellas = "";
+    for (let i = 0; i < 46; i++) {
+      const x = (Math.sin(i * 12.9) * 43758.5453 % 1 + 1) % 1 * W;
+      const y = (Math.sin(i * 78.2) * 12543.9 % 1 + 1) % 1 * (H * .42);
+      const r = .6 + ((i * 37) % 10) / 10 * 1.1;
+      estrellas += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#f4ead9" opacity="${(.35 + (i % 5) * .12).toFixed(2)}"/>`;
+    }
+
+    function cohete(cx, cy, escala, color) {
+      let rayos = "";
+      for (let i = 0; i < 10; i++) {
+        const a = (Math.PI * 2 * i) / 10;
+        const x1 = cx + Math.cos(a) * 6 * escala, y1 = cy + Math.sin(a) * 6 * escala;
+        const x2 = cx + Math.cos(a) * 22 * escala, y2 = cy + Math.sin(a) * 22 * escala;
+        rayos += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${color}" stroke-width="${(1.6 * escala).toFixed(2)}" stroke-linecap="round" opacity=".85"/>
+                   <circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="${(1.6 * escala).toFixed(2)}" fill="${color}"/>`;
+      }
+      return `<g>${rayos}</g>`;
+    }
+
+    const W2 = W / 2;
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+      <defs>
+        <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0a1128"/>
+          <stop offset=".55" stop-color="#102a24"/>
+          <stop offset="1" stop-color="#1c5c40"/>
+        </linearGradient>
+        <linearGradient id="campana" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e3b23c"/><stop offset="1" stop-color="#a3671f"/>
+        </linearGradient>
+        <linearGradient id="arco" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#efe3ca"/><stop offset="1" stop-color="#c9b78e"/>
+        </linearGradient>
+        <linearGradient id="banda" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#c23148"/><stop offset="1" stop-color="#7d1a2c"/>
+        </linearGradient>
+      </defs>
+
+      <rect width="${W}" height="${H}" fill="url(#cielo)"/>
+      ${estrellas}
+      ${cohete(W * .18, H * .16, 1, "#e3b23c")}
+      ${cohete(W * .82, H * .22, .8, "#c23148")}
+      ${cohete(W * .5, H * .09, .65, "#f4ead9")}
+
+      <!-- cerros -->
+      <path d="M0 ${H * .78} Q ${W * .22} ${H * .68} ${W * .46} ${H * .77} T ${W} ${H * .74} V ${H} H0Z" fill="#0e2d1d"/>
+      <path d="M0 ${H * .86} Q ${W * .3} ${H * .8} ${W * .6} ${H * .87} T ${W} ${H * .84} V ${H} H0Z" fill="#081c12"/>
+
+      <!-- poblado -->
+      <g fill="#04120b">
+        <rect x="${W * .1}" y="${H * .74}" width="${W * .05}" height="${H * .07}"/>
+        <rect x="${W * .17}" y="${H * .71}" width="${W * .06}" height="${H * .1}"/>
+        <polygon points="${W * .17},${H * .71} ${W * .2},${H * .66} ${W * .23},${H * .71}"/>
+        <rect x="${W * .75}" y="${H * .73}" width="${W * .05}" height="${H * .08}"/>
+        <rect x="${W * .82}" y="${H * .7}" width="${W * .05}" height="${H * .11}"/>
+        <polygon points="${W * .82},${H * .7} ${W * .845},${H * .655} ${W * .87},${H * .7}"/>
+      </g>
+
+      <!-- papel picado -->
+      <line x1="0" y1="${H * .085}" x2="${W}" y2="${H * .085}" stroke="#8a6a3a" stroke-width="1.5" opacity=".55"/>
+      ${Array.from({ length: 9 }, (_, i) => {
+        const x = (W / 9) * i + (W / 18);
+        const c = ["#c23148", "#f4ead9", "#1c5c40"][i % 3];
+        return `<polygon points="${(x - 16).toFixed(1)},${H * .085} ${(x + 16).toFixed(1)},${H * .085} ${x.toFixed(1)},${H * .085 + 30}" fill="${c}" opacity=".92"/>`;
+      }).join("")}
+
+      <!-- arco y campana -->
+      <path d="M ${W2 - 78} ${H * .62} V ${H * .32} Q ${W2 - 78} ${H * .17} ${W2} ${H * .17} Q ${W2 + 78} ${H * .17} ${W2 + 78} ${H * .32} V ${H * .62}"
+            fill="none" stroke="url(#arco)" stroke-width="26" stroke-linecap="round"/>
+      <path d="M ${W2 - 65} ${H * .6} V ${H * .33} Q ${W2 - 65} ${H * .2} ${W2} ${H * .2} Q ${W2 + 65} ${H * .2} ${W2 + 65} ${H * .33} V ${H * .6}"
+            fill="#132a1f"/>
+
+      <text x="${W2}" y="${H * .27}" text-anchor="middle" font-family="Georgia, 'Fraunces', serif" font-style="italic"
+            font-size="${W * .07}" fill="#e3b23c" opacity=".9">¡Viva México!</text>
+
+      <line x1="${W2}" y1="${H * .32}" x2="${W2}" y2="${H * .38}" stroke="#2b2118" stroke-width="4"/>
+      <path d="M ${W2 - 30} ${H * .38} C ${W2 - 30} ${H * .34} ${W2 + 30} ${H * .34} ${W2 + 30} ${H * .38}
+               C ${W2 + 30} ${H * .5} ${W2 + 15} ${H * .58} ${W2 + 15} ${H * .61}
+               L ${W2 - 15} ${H * .61} C ${W2 - 15} ${H * .58} ${W2 - 30} ${H * .5} ${W2 - 30} ${H * .38}Z"
+            fill="url(#campana)" stroke="#7a5222" stroke-width="2"/>
+      <ellipse cx="${W2}" cy="${H * .61}" rx="17" ry="4" fill="#8a5a22"/>
+      <circle cx="${W2}" cy="${H * .655}" r="5" fill="#5a3a12"/>
+      <path d="M ${W2 - 20} ${H * .4} Q ${W2 - 10} ${H * .36} ${W2} ${H * .37}" stroke="#fff" stroke-width="2" opacity=".4" fill="none"/>
+
+      <!-- bandera -->
+      <rect x="${W * .1}" y="${H * .5}" width="5" height="${H * .34}" fill="#7a5222"/>
+      <rect x="${W * .105}" y="${H * .5}" width="${W * .1}" height="${H * .16}" fill="#1c5c40"/>
+      <rect x="${W * .205}" y="${H * .5}" width="${W * .1}" height="${H * .16}" fill="#f4ead9"/>
+      <rect x="${W * .305}" y="${H * .5}" width="${W * .1}" height="${H * .16}" fill="#a52439"/>
+      <circle cx="${W * .255}" cy="${H * .58}" r="9" fill="#8a5a22" opacity=".85"/>
+
+      <!-- nopal -->
+      <g fill="#2f7a2a">
+        <ellipse cx="${W * .83}" cy="${H * .77}" rx="20" ry="26" transform="rotate(-8 ${W * .83} ${H * .77})"/>
+        <ellipse cx="${W * .8}" cy="${H * .69}" rx="15" ry="20" transform="rotate(10 ${W * .8} ${H * .69})"/>
+        <ellipse cx="${W * .87}" cy="${H * .66}" rx="13" ry="18" transform="rotate(-12 ${W * .87} ${H * .66})"/>
+      </g>
+      <circle cx="${W * .865}" cy="${H * .61}" r="4" fill="#a52439"/>
+      <circle cx="${W * .885}" cy="${H * .63}" r="3.4" fill="#c23148"/>
+
+      <!-- listón inferior -->
+      <path d="M0 ${H * .935} L${W * .12} ${H * .9} L${W * .88} ${H * .9} L${W} ${H * .935} L${W} ${H} L0 ${H}Z" fill="url(#banda)"/>
+      <line x1="0" y1="${H * .935}" x2="${W}" y2="${H * .935}" stroke="#e3b23c" stroke-width="2" opacity=".7"/>
+      <text x="${W2}" y="${H * .97}" text-anchor="middle" font-family="Georgia, serif" font-size="${W * .052}" letter-spacing="1"
+            fill="#f4ead9">16 DE SEPTIEMBRE DE 1810</text>
+    </svg>`;
+  }
+
+  /* =====================================================
+     GENERADOR DE PIEZAS DE ROMPECABEZAS
+     ===================================================== */
+  const FILAS = 4, COLUMNAS = 3, TOTAL = FILAS * COLUMNAS;
+  const UMBRAL_ENCAJE = 22; // px lógicos
+
+  const campo       = document.getElementById("campo");
+  const guia        = document.getElementById("guia");
+  const guiaImagen  = document.getElementById("guia-imagen");
+  const numPiezas    = document.getElementById("num-piezas");
+  const numTiempo    = document.getElementById("num-tiempo");
+  const victoria      = document.getElementById("victoria");
+
+  let zTope = 10;
+  let piezasFijas = 0;
+  let segundos = 0;
+  let cronometro = null;
+  let escala = 1;
+
+  function formatoTiempo(s) {
+    const m = String(Math.floor(s / 60)).padStart(2, "0");
+    const r = String(s % 60).padStart(2, "0");
+    return `${m}:${r}`;
+  }
+  function iniciarCronometro() {
+    detenerCronometro();
+    segundos = 0; numTiempo.textContent = "00:00";
+    cronometro = setInterval(() => { segundos++; numTiempo.textContent = formatoTiempo(segundos); }, 1000);
+  }
+  function detenerCronometro() { if (cronometro) clearInterval(cronometro); cronometro = null; }
+
+  function baraja(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  async function construirRompecabezas() {
+    // limpia piezas anteriores
+    campo.querySelectorAll(".pieza").forEach(p => p.remove());
+    victoria.classList.remove("abierta");
+    victoria.setAttribute("inert", "");
+    piezasFijas = 0; zTope = 10;
+    numPiezas.textContent = `0/${TOTAL}`;
+
+    const rectoGuia = guia.getBoundingClientRect();
+    const BOARD_W = rectoGuia.width, BOARD_H = rectoGuia.height;
+    const PIEZA_L = BOARD_W / COLUMNAS; // piezas cuadradas (3:4 con 3 cols y 4 filas)
+    const AMP_L = PIEZA_L * 0.15;
+    const SALIENTE_L = AMP_L * 1.9;
+
+    escala = Math.min(window.devicePixelRatio || 1, 2);
+    const BW = Math.round(BOARD_W * escala), BH = Math.round(BOARD_H * escala);
+    const PZ = Math.round(PIEZA_L * escala);
+    const AMP = AMP_L * escala;
+    const OV = Math.round(SALIENTE_L * escala);
+
+    // altura de la bandeja (según cuántas piezas caben por fila)
+    const cajaL = PIEZA_L + 2 * SALIENTE_L;
+    const colsBandeja = Math.max(2, Math.floor(BOARD_W / cajaL));
+    const filasBandeja = Math.ceil(TOTAL / colsBandeja);
+    const alturaBandeja = filasBandeja * cajaL + 50;
+    campo.style.height = (BOARD_H + 60 + alturaBandeja) + "px";
+
+    // lienzo fuente con la escena completa
+    const fuente = document.createElement("canvas");
+    fuente.width = BW; fuente.height = BH;
+    const ctxFuente = fuente.getContext("2d");
+
+    await new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => { ctxFuente.drawImage(img, 0, 0, BW, BH); resolve(); };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(escenaSVG(480, 640));
+    });
+
+    guiaImagen.style.backgroundImage = `url(${fuente.toDataURL("image/jpeg", .85)})`;
+
+    // transformaciones de cada lado (coordenadas de lienzo de pieza, ya con el saliente incluido)
+    const T_TOP    = (fx, fy) => ({ x: OV + fx * PZ,        y: OV - fy * AMP });
+    const T_RIGHT  = (fx, fy) => ({ x: OV + PZ + fy * AMP,  y: OV + fx * PZ });
+    const T_BOTTOM = (fx, fy) => ({ x: OV + PZ - fx * PZ,   y: OV + PZ + fy * AMP });
+    const T_LEFT   = (fx, fy) => ({ x: OV - fy * AMP,       y: OV + PZ - fx * PZ });
+
+    function tramoBorde(T, signo) {
+      const fin = T(1, 0);
+      if (!signo) return `L ${fin.x.toFixed(2)} ${fin.y.toFixed(2)}`;
+      const p1 = T(.28, 0), c1 = T(.28, 1.6 * signo), c2 = T(.72, 1.6 * signo), p2 = T(.72, 0);
+      return `L ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} ` +
+             `C ${c1.x.toFixed(2)} ${c1.y.toFixed(2)} ${c2.x.toFixed(2)} ${c2.y.toFixed(2)} ${p2.x.toFixed(2)} ${p2.y.toFixed(2)} ` +
+             `L ${fin.x.toFixed(2)} ${fin.y.toFixed(2)}`;
+    }
+
+    function rutaPieza(arriba, derecha, abajo, izquierda) {
+      const ini = T_TOP(0, 0);
+      return `M ${ini.x.toFixed(2)} ${ini.y.toFixed(2)} ` +
+        tramoBorde(T_TOP, arriba) + " " + tramoBorde(T_RIGHT, derecha) + " " +
+        tramoBorde(T_BOTTOM, abajo) + " " + tramoBorde(T_LEFT, izquierda) + " Z";
+    }
+
+    // bordes internos aleatorios (compartidos entre piezas vecinas)
+    const hBorde = Array.from({ length: FILAS - 1 }, () =>
+      Array.from({ length: COLUMNAS }, () => (Math.random() < .5 ? 1 : -1)));
+    const vBorde = Array.from({ length: FILAS }, () =>
+      Array.from({ length: COLUMNAS - 1 }, () => (Math.random() < .5 ? 1 : -1)));
+
+    const piezasDatos = [];
+    for (let r = 0; r < FILAS; r++) {
+      for (let c = 0; c < COLUMNAS; c++) {
+        const arriba    = r === 0 ? 0 : -hBorde[r - 1][c];
+        const derecha   = c === COLUMNAS - 1 ? 0 : vBorde[r][c];
+        const abajo     = r === FILAS - 1 ? 0 : hBorde[r][c];
+        const izquierda = c === 0 ? 0 : -vBorde[r][c - 1];
+        piezasDatos.push({ r, c, ruta: rutaPieza(arriba, derecha, abajo, izquierda) });
+      }
+    }
+
+    // posiciones ordenadas (con leve variación) para la bandeja
+    const posicionesBandeja = [];
+    for (let i = 0; i < TOTAL; i++) {
+      const col = i % colsBandeja, fila = Math.floor(i / colsBandeja);
+      posicionesBandeja.push({
+        left: col * cajaL + (Math.random() * 10 - 5),
+        top: BOARD_H + 40 + fila * cajaL + (Math.random() * 10 - 5)
+      });
+    }
+    const ordenBarajado = baraja(piezasDatos);
+
+    ordenBarajado.forEach((dato, i) => {
+      const { r, c, ruta } = dato;
+      const lienzo = document.createElement("canvas");
+      lienzo.width = PZ + 2 * OV; lienzo.height = PZ + 2 * OV;
+      const ctxPieza = lienzo.getContext("2d");
+      const recorte = new Path2D(ruta);
+      ctxPieza.save();
+      ctxPieza.clip(recorte);
+      ctxPieza.drawImage(fuente, OV - c * PZ, OV - r * PZ);
+      ctxPieza.restore();
+      ctxPieza.save();
+      ctxPieza.strokeStyle = "rgba(255,255,255,.35)";
+      ctxPieza.lineWidth = 1.3 * escala;
+      ctxPieza.stroke(recorte);
+      ctxPieza.restore();
+
+      const boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = "pieza";
+      boton.style.width = (PIEZA_L + 2 * SALIENTE_L) + "px";
+      boton.style.height = (PIEZA_L + 2 * SALIENTE_L) + "px";
+      boton.setAttribute("aria-label", `Pieza ${i + 1} de ${TOTAL}`);
+      boton.appendChild(lienzo);
+
+      const objetivo = { left: c * PIEZA_L - SALIENTE_L, top: r * PIEZA_L - SALIENTE_L };
+      const pos = posicionesBandeja[i];
+      boton.style.left = pos.left + "px";
+      boton.style.top = pos.top + "px";
+      boton.dataset.solved = "0";
+
+      habilitarArrastre(boton, objetivo);
+      campo.appendChild(boton);
+    });
+
+    iniciarCronometro();
+  }
+
+  /* =====================================================
+     ARRASTRAR Y SOLTAR
+     ===================================================== */
+  function habilitarArrastre(pieza, objetivo) {
+    let offX = 0, offY = 0, activo = false;
+
+    pieza.addEventListener("pointerdown", e => {
+      if (pieza.dataset.solved === "1") return;
+      activo = true;
+      pieza.setPointerCapture(e.pointerId);
+      pieza.style.zIndex = ++zTope;
+      const rect = pieza.getBoundingClientRect();
+      offX = e.clientX - rect.left;
+      offY = e.clientY - rect.top;
+    });
+
+    pieza.addEventListener("pointermove", e => {
+      if (!activo) return;
+      const campoRect = campo.getBoundingClientRect();
+      const nuevoLeft = e.clientX - campoRect.left - offX;
+      const nuevoTop = e.clientY - campoRect.top - offY;
+      pieza.style.left = nuevoLeft + "px";
+      pieza.style.top = nuevoTop + "px";
+    });
+
+    function soltar(e) {
+      if (!activo) return;
+      activo = false;
+      const left = parseFloat(pieza.style.left);
+      const top = parseFloat(pieza.style.top);
+      const dist = Math.hypot(left - objetivo.left, top - objetivo.top);
+      if (dist < UMBRAL_ENCAJE) {
+        pieza.style.left = objetivo.left + "px";
+        pieza.style.top = objetivo.top + "px";
+        pieza.dataset.solved = "1";
+        pieza.classList.add("pieza--fija");
+        pieza.style.zIndex = 1;
+        piezasFijas++;
+        numPiezas.textContent = `${piezasFijas}/${TOTAL}`;
+        if (piezasFijas === TOTAL) terminarJuego();
+      }
+    }
+    pieza.addEventListener("pointerup", soltar);
+    pieza.addEventListener("pointercancel", soltar);
+  }
+
+  function terminarJuego() {
+    detenerCronometro();
+    document.getElementById("v-tiempo").textContent = formatoTiempo(segundos);
+    victoria.removeAttribute("inert");
+    victoria.classList.add("abierta");
+    document.getElementById("v-reiniciar").focus();
+  }
+
+  document.getElementById("reiniciar").onclick = construirRompecabezas;
+  document.getElementById("v-reiniciar").onclick = construirRompecabezas;
+
+  let guiaVisible = true;
+  document.getElementById("alternar-guia").onclick = function () {
+    guiaVisible = !guiaVisible;
+    guiaImagen.classList.toggle("oculta", !guiaVisible);
+    this.textContent = guiaVisible ? "Ocultar guía" : "Ver guía";
+  };
+
+  /* =====================================================
+     AMBIENTE DE FONDO
+     ===================================================== */
+  function estrellasFondo(n) {
+    const c = document.getElementById("cielo");
+    for (let i = 0; i < n; i++) {
+      const e = document.createElement("i");
+      e.className = "estrella";
+      e.style.cssText =
+        `--x:${(Math.random() * 100).toFixed(1)}%;--y:${(Math.random() * 60).toFixed(1)}%;` +
+        `--z:${(1 + Math.random() * 2).toFixed(1)}px;--d:${(2.5 + Math.random() * 3).toFixed(1)}s;--r:${(-Math.random() * 4).toFixed(1)}s`;
+      c.appendChild(e);
+    }
+  }
+  function papelPicadoFondo(n) {
+    const p = document.getElementById("picado");
+    for (let i = 0; i < n; i++) p.appendChild(document.createElement("span"));
+  }
+
+  /* =====================================================
+     ARRANQUE
+     ===================================================== */
+  papelPicadoFondo(16);
+  estrellasFondo(30);
+
+  Promise.race([
+    document.fonts ? document.fonts.ready : Promise.resolve(),
+    new Promise(r => setTimeout(r, 1200))
+  ]).then(async () => {
+    document.body.classList.remove("no-cargado");
+    await construirRompecabezas();
+  });
+</script>
+</body>
+</html>

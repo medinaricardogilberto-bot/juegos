@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1f17">
+<title>Juegos Educativos · Independencia de México</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/memorama.css">
+<link rel="stylesheet" href="css/rompecabezas.css">
+<link rel="stylesheet" href="css/juegos.css">
+<link rel="stylesheet" href="css/trivia.css">
+<link rel="stylesheet" href="css/ordena.css">
+<link rel="stylesheet" href="css/quiensoy.css">
+<link rel="stylesheet" href="css/sopa.css">
+<link rel="stylesheet" href="css/misterio.css">
+</head>
+<body>
+<div class="cielo" id="cielo" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+
+<main class="pantalla activa" id="pantalla-menu">
+  <p class="ceja">16 de septiembre · Grito de Dolores</p>
+  <h1>Juegos <em>Educativos</em></h1>
+  <p class="subtitulo">Aprende la historia de la Independencia de México jugando. ¿Con qué quieres empezar?</p>
+  <div class="opciones">
+    <button class="opcion" type="button" data-juego="rompecabezas">
+      <span class="opcion__icono" aria-hidden="true">🧩</span>
+      <span class="opcion__nombre">Rompecabezas</span>
+      <span class="opcion__desc">Arma la escena del Grito de Dolores pieza por pieza.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="memorama">
+      <span class="opcion__icono" aria-hidden="true">🃏</span>
+      <span class="opcion__nombre">Memorama</span>
+      <span class="opcion__desc">Encuentra las parejas de símbolos patrios.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="trivia">
+      <span class="opcion__icono" aria-hidden="true">❓</span>
+      <span class="opcion__nombre">Trivia histórica <span class="opcion__nuevo">NUEVO</span></span>
+      <span class="opcion__desc">Responde preguntas sobre personajes, fechas, lugares y documentos.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="ordena">
+      <span class="opcion__icono" aria-hidden="true">⏳</span>
+      <span class="opcion__nombre">Ordena la historia <span class="opcion__nuevo">NUEVO</span></span>
+      <span class="opcion__desc">Acomoda los acontecimientos en orden cronológico.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="quiensoy">
+      <span class="opcion__icono" aria-hidden="true">🎭</span>
+      <span class="opcion__nombre">¿Quién soy? <span class="opcion__nuevo">NUEVO</span></span>
+      <span class="opcion__desc">Adivina al personaje con el menor número de pistas.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="sopa">
+      <span class="opcion__icono" aria-hidden="true">🔤</span>
+      <span class="opcion__nombre">Sopa de letras <span class="opcion__nuevo">NUEVO</span></span>
+      <span class="opcion__desc">Encuentra el vocabulario de la Independencia escondido en el tablero.</span>
+    </button>
+    <button class="opcion" type="button" data-juego="misterio">
+      <span class="opcion__icono" aria-hidden="true">🕯️</span>
+      <span class="opcion__nombre">El misterio histórico <span class="opcion__nuevo">NUEVO</span></span>
+      <span class="opcion__desc">Investiga documentos, cartas y testimonios para resolver casos.</span>
+    </button>
+  </div>
+  <section class="progreso-menu" id="progreso-menu" aria-label="Mi progreso"></section>
+</main>
+
+<section class="pantalla" id="pantalla-modo">
+  <p class="ceja">Elige cómo jugar</p>
+  <h2 class="titulo-modo" id="modo-titulo"></h2>
+  <div class="opciones">
+    <button class="opcion opcion--modo" type="button" data-modo="solo">
+      <span class="opcion__icono" aria-hidden="true">👤</span>
+      <span><span class="opcion__nombre">Un jugador</span><span class="opcion__desc" id="modo-desc-solo">Sin conexión, como el juego original.</span></span>
+    </button>
+    <button class="opcion opcion--modo" type="button" data-modo="local">
+      <span class="opcion__icono" aria-hidden="true">👥</span>
+      <span><span class="opcion__nombre">Multijugador local</span><span class="opcion__desc" id="modo-desc-local">Varias personas en el mismo Wi-Fi.</span></span>
+    </button>
+    <button class="opcion opcion--modo" type="button" data-modo="online">
+      <span class="opcion__icono" aria-hidden="true">🌎</span>
+      <span><span class="opcion__nombre">Multijugador online</span><span class="opcion__desc" id="modo-desc-online">Jugadores en casas distintas.</span></span>
+    </button>
+  </div>
+  <p class="aviso" id="aviso" role="status"></p>
+  <button class="boton boton--fantasma volver" id="volver-menu" type="button">Volver al menú</button>
+</section>
+
+<section class="pantalla" id="pantalla-sala">
+  <p class="ceja" id="sala-ceja"></p>
+  <h2 class="titulo-modo" id="sala-titulo"></h2>
+
+  <div class="panel" id="sala-entrada">
+    <label class="campo">Tu nombre
+      <input id="sala-nombre" maxlength="16" autocomplete="off" placeholder="Ej. Ana">
+    </label>
+    <button class="boton" id="sala-crear" type="button">Crear partida</button>
+    <p class="separador">o únete a una partida</p>
+    <label class="campo">Código de sala
+      <input id="sala-codigo" class="campo__codigo" maxlength="6" autocomplete="off" placeholder="ABC123">
+    </label>
+    <button class="boton boton--oscuro" id="sala-unirse" type="button">Unirse</button>
+    <div id="sala-opciones-crear" class="sala-publicas" hidden>
+      <label class="campo campo--check"><input type="checkbox" id="sala-publica"> Sala pública (aparece en la lista)</label>
+    </div>
+    <div id="sala-publicas" class="sala-publicas" hidden>
+      <p class="separador">salas públicas abiertas</p>
+      <ul class="lista-salas" id="sala-lista"></ul>
+      <button class="boton boton--oscuro boton--fantasma-oscuro" id="sala-actualizar" type="button">Actualizar lista</button>
+    </div>
+    <button class="boton boton--oscuro boton--fantasma-oscuro" id="sala-volver" type="button">Volver</button>
+  </div>
+
+  <div class="panel" id="sala-lobby" hidden>
+    <p class="panel__etiqueta" id="lobby-juego"></p>
+    <p class="panel__etiqueta">Código de sala <span id="lobby-visibilidad" class="lobby-vis"></span></p>
+    <div class="codigo" id="lobby-codigo"></div>
+    <button class="boton boton--oscuro boton--fantasma-oscuro lobby-copiar" id="lobby-copiar" type="button">Copiar código</button>
+    <p class="pista" id="lobby-pista"></p>
+    <p class="panel__etiqueta" id="lobby-cupo"></p>
+    <ul class="jugadores" id="lobby-jugadores"></ul>
+    <div id="lobby-reglas" class="lobby-reglas" hidden></div>
+    <p class="pista" id="lobby-espera"></p>
+    <button class="boton boton--oscuro" id="lobby-listo" type="button" hidden>Estoy listo</button>
+    <p class="pista pista--aviso" id="lobby-aviso" role="status"></p>
+    <button class="boton" id="lobby-iniciar" type="button">Iniciar partida</button>
+    <button class="boton boton--oscuro boton--fantasma-oscuro" id="lobby-salir" type="button">Abandonar partida</button>
+  </div>
+
+  <p class="aviso" id="sala-error" role="alert"></p>
+</section>
+
+<div class="pantalla pantalla--juego" id="pantalla-juego">
+  <div id="juego-raiz"></div>
+  <button class="boton boton--fantasma volver-juego" id="volver-juego" type="button">← Menú</button>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<div class="estado" id="estado" role="status"><span class="estado__punto"></span><span id="estado-texto">Conectando…</span></div>
+
+<script src="config.js"></script>
+<script src="/socket.io/socket.io.js" onerror="void 0"></script>
+<script src="js/ambiente.js"></script>
+<script src="js/red.js"></script>
+<script src="juegos/memorama.js"></script>
+<script src="juegos/rompecabezas.js"></script>
+<script src="datos/trivia.js"></script>
+<script src="datos/ordena.js"></script>
+<script src="datos/quiensoy.js"></script>
+<script src="datos/sopa.js"></script>
+<script src="datos/misterio.js"></script>
+<script src="motores/base.js"></script>
+<script src="motores/trivia.js"></script>
+<script src="motores/ordena.js"></script>
+<script src="motores/quiensoy.js"></script>
+<script src="motores/sopa.js"></script>
+<script src="motores/misterio.js"></script>
+<script src="js/comun.js"></script>
+<script src="js/campos.js"></script>
+<script src="js/sesion.js"></script>
+<script src="juegos/trivia.js"></script>
+<script src="juegos/ordena.js"></script>
+<script src="juegos/quiensoy.js"></script>
+<script src="juegos/sopa.js"></script>
+<script src="juegos/misterio.js"></script>
+<script src="js/sala.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
